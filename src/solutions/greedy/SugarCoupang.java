@@ -3,7 +3,7 @@ package solutions.greedy;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class sugarCoupang {
+public class SugarCoupang {
     public static void main(String args[]) throws Exception {
         int N;
 
