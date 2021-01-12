@@ -15,15 +15,16 @@ public class TargetNumber {
   }
 
   public static void dfs(int inx, int[] numbers, int target) {
-    if (inx == numbers.length - 1) {
-      int sum = numbers[0];
-      for (int i = 0; i < numbers.length - 1; i++) {
+    if (inx == numbers.length) {
+      int sum = 0;
+      for (int i = 0; i < numbers.length; i++) {
         if (isPlus[i]) {
-          sum+=numbers[i+1];
+          sum+=numbers[i];
         } else {
-          sum-=numbers[i+1];
+          sum-=numbers[i];
         }
       }
+      System.out.println();
       if (sum == target) {
         cnt++;
       }
