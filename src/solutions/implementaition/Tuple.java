@@ -36,7 +36,6 @@ public class Tuple {
         if (!sb.isEmpty()) {
           tmpList.add(Integer.parseInt(sb.toString()));
           sb = new StringBuilder();
-          Collections.sort(tmpList);
           list.add(new TupleList(tmpList));
           if (tmpList.size()>limitLen) limitLen = tmpList.size();
         }
@@ -51,18 +50,13 @@ public class Tuple {
     answer[0] = list.get(0).list.get(0);
 
     for (int i = 1;i<list.size();i++) {
-      boolean flag = false;
       ArrayList<Integer> list2 = list.get(i-1).list;
       ArrayList<Integer> list3 = list.get(i).list;
-      for (int j = 0;j<list2.size();j++) {
-        if (list2.get(j) != list3.get(j)) {
-          flag = true;
+      for (int j = 0;j<list3.size();j++) {
+        if (!list2.contains(list3.get(j))) { //왜 정렬해서 비교하면 안되는걸까?
           answer[i] = list3.get(j);
           break;
         }
-      }
-      if (!flag) {
-        answer[i] = list3.get(list3.size()-1);
       }
     }
 
@@ -70,7 +64,7 @@ public class Tuple {
   }
 
   public static void main(String args[]) {
-    int [] arr = solution("{{4,2,3},{3},{2,3,4,1},{2,3}}");
+    int [] arr = solution("{{2},{2,1},{2,1,3},{2,1,3,4}}");
     for (int i : arr) {
       System.out.printf("%d ",i);
     }
