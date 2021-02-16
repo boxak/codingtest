@@ -17,6 +17,7 @@ public class Distinct {
     public static void main(String[] args) {
         int a = solution(new int[]{1,2,3,3,3,2,4,5,6});
         System.out.println(a);
+        System.out.println();
     }
 
 }
