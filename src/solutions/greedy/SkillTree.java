@@ -1,40 +1,38 @@
 package solutions.greedy;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class SkillTree {
-    public int solution(String skill, String[] skill_trees) {
+    public static int solution(String skill, String[] skill_trees) {
         int answer = 0;
 
-        for (String skills : skill_trees) {
-            int skillLen = skill.length();
-            int skillsLen = skills.length();
-            boolean checkSkill[] = new boolean[skillLen];
-            boolean isPossible = true;
-            for (int i = 0; i < skillsLen; i++) {
-                for (int j = 0; j < skillLen; j++) {
-                    char skill_A = skills.charAt(i);
-                    char skill_B = skill.charAt(j);
-                    if (skill_A == skill_B) {
-                        if (j == 0) {
-                            checkSkill[j] = true;
-                        } else {
-                            if (!checkSkill[j-1]) {
-                                isPossible = false;
-                                break;
-                            } else {
-                                checkSkill[j] = true;
-                            }
-                        }
+        for (int i = 0;i< skill_trees.length;i++) {
+            String sk = skill_trees[i];
+            Queue<Character> tempQue = new LinkedList<>();
+            for (int j = 0;j<skill.length();j++) {
+                tempQue.add(skill.charAt(j));
+            }
+            boolean flag = true;
+            for (int j = 0;j<sk.length();j++) {
+                char c = sk.charAt(j);
+                if (tempQue.contains(c)) {
+                    if (tempQue.peek()!=c) {
+                        flag = false;
+                    } else {
+                        tempQue.poll();
                     }
                 }
-                if (!isPossible) {
-                    break;
-                }
             }
-            if (isPossible) {
+            if (flag) {
                 answer++;
             }
         }
 
         return answer;
+    }
+
+    public static void main(String args[]) {
+        solution("CBD",new String[]{"BACDE","CBADF","AECB","BDA"});
     }
 }
