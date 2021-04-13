@@ -3,62 +3,71 @@ package solutions.dfs;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class JourneyCourse {
 
-  ArrayList<String> order = new ArrayList<>();
+  static ArrayList<String> order = new ArrayList<>();
+  static HashMap<String, Queue<String>> map;
 
-  class Pair implements Comparable<Pair> {
-    String visit;
-    boolean visited;
-    Pair(String a, boolean b) {
-      visit = a;
-      visited = b;
-    }
-
-    public int compareTo(Pair pair) {
-      return this.visit.compareTo(pair.visit);
-    }
-  }
-
-  public String[] solution(String[][] tickets) {
+  public static String[] solution(String[][] tickets) {
     String[] answer = {};
-    HashMap<String,ArrayList<Pair>> map = new HashMap<>();
 
-    for (int i = 0;i<tickets.length;i++) {
-      String a = tickets[i][0];
-      String b = tickets[i][1];
-      if (!map.containsKey(a)) map.put(a,new ArrayList<>());
-      if (!map.containsKey(b)) map.put(b,new ArrayList<>());
-      map.get(a).add(new Pair(b,false));
+    map = new HashMap<>();
+
+    for (int i = 0;i< tickets.length;i++) {
+      String start = tickets[i][0];
+      String end = tickets[i][1];
+      if (!map.containsKey(start)) {
+        Queue<String> temp = new LinkedList<>();
+        temp.add(end);
+        map.put(start,temp);
+      } else {
+        Queue<String> temp = map.get(start);
+        temp.add(end);
+        map.put(start,temp);
+      }
     }
 
     for (String key : map.keySet()) {
-      ArrayList<Pair> list = map.get(key);
-      Collections.sort(list);
-      map.put(key,list);
+      ArrayList<String> tempList = new ArrayList<>();
+      for (String s : map.get(key)) {
+        tempList.add(s);
+      }
+      Collections.sort(tempList);
+      Queue<String> tempQue = new LinkedList<>();
+      for (String s : tempList) {
+        tempQue.add(s);
+      }
+      map.put(key,tempQue);
     }
 
-    dfs(map,"ICN");
+    dfs("ICN");
 
     answer = new String[order.size()];
 
-    for (int i = 0;i<order.size();i++) {
+    for (int i = 0;i< order.size();i++) {
       answer[i] = order.get(i);
     }
 
     return answer;
   }
 
-  void dfs(HashMap<String,ArrayList<Pair>> map, String visit) {
-    ArrayList<Pair> list = map.get(visit);
+  static void dfs(String visit) {
     order.add(visit);
-    for (int i = 0;i<list.size();i++) {
-      if (!list.get(i).visited) {
-        list.get(i).visited = true;
-        dfs(map,list.get(i).visit);
-      }
+    Queue<String> tempQue = map.get(visit);
+    if (tempQue != null && tempQue.size()>0) {
+      String next = tempQue.peek();
+      tempQue.poll();
+      map.put(visit,tempQue);
+      dfs(next);
     }
+  }
+
+  public static void main(String args[]) {
+    String[] arr = solution(new String[][]{{"ICN","SFO"},{"ICN","ATL"},{"SFO","ATL"},{"ATL","ICN"},{"ATL","SFO"}});
+    for (String s : arr) System.out.println(s);
   }
 
 }
