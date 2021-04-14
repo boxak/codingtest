@@ -16,9 +16,19 @@ public class MagicianAndTornado {
     int[] dr = {-1,0,1,0};
     int[] dc = {0,1,0,-1};
 
-    int[] dr2 = {-1,-2,-1,-1,0,1,1,1,2};
-    int[] dc2 = {1,0,0,-1,-2,-1,0,1,0};
-    double[] rate = {0.01,0.02,0.07,0.1,0.05,0.1,0.07,0.01,0.02};
+
+    double[] rate = {0.01,0.07,0.1,0.02,0.05,0.1,0.07,0.01,0.02};
+    int[] ndr = {1,0,-1,0,-2,-1,0,1,0};
+    int[] ndc = {1,1,1,2,0,-1,-1,-1,-2};
+
+    int[] edr = {-1,-1,-1,-2,0,1,1,1,2};
+    int[] edc = {-1,0,1,0,2,1,0,-1,0};
+
+    int[] sdr = {-1,0,1,0,2,1,0,-1,0};
+    int[] sdc = {-1,-1,-1,-2,0,1,1,1,2};
+
+    int[] wdr = {-1,-1,-1,-2,0,1,1,1,2};
+    int[] wdc = {1,0,-1,0,-2,-1,0,1,0};
 
     for (int i = 0;i<N;i++) {
       String str = br.readLine();
@@ -56,22 +66,34 @@ public class MagicianAndTornado {
       c = nc;
       int y = Ar[r][c];
       for (int j = 0;j<9;j++) {
-        int r2 = r+dr2[j];
-        int c2 = c+dc2[j];
+        int r2 = 0;
+        int c2 = 0;
+        if (d == 0) {
+          r2 = r+ndr[j];
+          c2 = c+ndc[j];
+        }
+        if (d == 1) {
+          r2 = r + edr[j];
+          c2 = c + edc[j];
+        }
+        if (d == 2) {
+          r2 = r+sdr[j];
+          c2 = c+sdc[j];
+        }
+        if (d==3) {
+          r2 = r+wdr[j];
+          c2 = c+wdc[j];
+        }
         int mass = (int)(y*rate[j]);
         if (r2<0 || r2>=N || c2<0 || c2>=N) answer+=mass;
         else Ar[r2][c2]+=mass;
         Ar[r][c]-=mass;
       }
-
-
-      for (int row = 0;row<N;row++) {
-        for (int col = 0;col<N;col++) {
-          System.out.printf("%d ",Ar[row][col]);
-        }
-        System.out.println();
-      }
-      System.out.println();
+      int nr2 = r+dr[d];
+      int nc2 = c+dc[d];
+      if (nr2<0 || nr2>=N || nc2<0 || nc2>=N) answer+=Ar[r][c];
+      else Ar[nr2][nc2]+=Ar[r][c];
+      Ar[r][c] = 0;
 
     }
     System.out.println(answer);
