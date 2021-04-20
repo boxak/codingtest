@@ -79,16 +79,35 @@ public class StudentShark {
 
     for (int i = 1;i<4;i++) {
       int nr = sharkR+dr[sharkD]*i;
-      int nc = sharkC+dc[sharkC]*i;
+      int nc = sharkC+dc[sharkD]*i;
       if (nr<0 || nr>=4 || nc<0 || nc>=4) break;
       if (map[nr][nc].inx!=0) {
-        dfs(map,list,sharkR,sharkC,sharkD,eatSum+inx);
+        Fish[][] tempMap = new Fish[4][4];
+        ArrayList<Fish> tempList = new ArrayList<>();
+        for (int j = 0;j<4;j++) {
+          for (int k = 0;k<4;k++) {
+            Fish tempFish = new Fish(map[j][k].inx,map[j][k].r,map[j][k].c,map[j][k].dir);
+            tempMap[j][k] = tempFish;
+          }
+        }
+        for (Fish fish : list) {
+          tempList.add(new Fish(fish.inx,fish.r,fish.c,fish.dir));
+        }
+        dfs(map,list,nr,nc,sharkD,eatSum+inx);
+        for (int j = 0;j<4;j++) {
+          for (int k = 0;k<4;k++) {
+            map[j][k] = new Fish(tempMap[j][k].inx,tempMap[j][k].r,tempMap[j][k].c,tempMap[j][k].dir);
+          }
+        }
+        list.clear();
+        for (Fish fish : tempList) {
+          list.add(new Fish(fish.inx,fish.r,fish.c,fish.dir));
+        }
       }
     }
   }
 
   static Map<String,Object> fishMove(Fish[][] map, ArrayList<Fish> list,int sharkR,int sharkC) {
-    System.out.println(map.toString());
     Map<String,Object> objMap = new HashMap<>();
     for (int i = 0;i<list.size();i++) {
       Fish fish = list.get(i);
@@ -124,15 +143,6 @@ public class StudentShark {
     }
     objMap.put("map",map);
     objMap.put("list",list);
-
-//    for (int i = 0;i<4;i++) {
-//      for (int j = 0;j<4;j++) {
-//        System.out.printf("%d ",map[i][j].inx);
-//      }
-//      System.out.println();
-//    }
-//    System.out.println();
-
     return objMap;
   }
 }
