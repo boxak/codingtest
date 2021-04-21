@@ -3,6 +3,7 @@ package solutions.implementaition;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -41,6 +42,7 @@ public class VehicleRepairShop {
 
   public static void main(String args[]) throws IOException {
     BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\enliple\\Downloads\\sample_input.txt"));
+    //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     int TestCnt = Integer.parseInt(br.readLine());
 
     for (int test = 1;test<=TestCnt;test++) {
@@ -185,15 +187,6 @@ public class VehicleRepairShop {
         }
       }
     }
-
-    ArrayList<Customer> tempList = new ArrayList<>();
-
-    for (Customer customer : aque) tempList.add(new Customer(customer.inx, customer.time, customer.num));
-    aque.clear();
-
-    Collections.sort(tempList);
-
-    for (Customer customer : tempList) aque.add(new Customer(customer.inx, customer.time, customer.num));
 
     for (int i = 0;i<N;i++) {
       if (!check1[i] && !aque.isEmpty()) {
