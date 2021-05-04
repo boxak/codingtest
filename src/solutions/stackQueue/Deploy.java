@@ -1,68 +1,44 @@
 package solutions.stackQueue;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class Deploy {
-
-    static class Pair {
-        int progress;
-        int speed;
-        Pair(int x, int y) {
-            progress = x;
-            speed = y;
-        }
-    }
-
     public static int[] solution(int[] progresses, int[] speeds) {
         int[] answer = {};
 
-        int N = progresses.length;
-        Queue<Pair> que = new LinkedList<>();
+        int cntFinish = 0;
+        int n = progresses.length;
+        int[] arr = new int[n];
         ArrayList<Integer> list = new ArrayList<>();
 
-        for (int i = 0;i<N;i++) {
-            que.add(new Pair(progresses[i],speeds[i]));
-        }
+        for (int i = 0;i<n;i++) arr[i] = progresses[i];
 
-        while (!que.isEmpty()) {
-            int queSize = que.size();
-            boolean isDeploy = true;
+        while(cntFinish < n) {
+            for (int i = cntFinish;i<n;i++) {
+                if (arr[i]<100) arr[i]+=speeds[i];
+            }
             int cntDeploy = 0;
-            while(queSize>0) {
-                int progress = que.peek().progress;
-                int speed = que.peek().speed;
-                que.poll();
-                progress = progress+speed>100 ? 100 : progress+speed;
-                if (progress==100 && isDeploy) {
-                    cntDeploy++;
-                } else {
-                    que.add(new Pair(progress,speed));
-                    isDeploy = false;
-                }
-                queSize--;
+            while(arr[cntFinish]>=100) {
+                cntFinish++;
+                cntDeploy++;
+                if (cntFinish>=n) break;
             }
-            if (cntDeploy>0) {
-                list.add(cntDeploy);
-            }
+            if (cntDeploy >= 1) list.add(cntDeploy);
         }
 
-        int listSize = list.size();
-        answer = new int[listSize];
+        answer = new int[list.size()];
 
-        for (int i = 0;i<listSize;i++) {
-            answer[i] = list.get(i);
-        }
+        for (int i = 0;i<list.size();i++) answer[i] = list.get(i);
 
         return answer;
     }
 
-    public static void main(String args[]) {
-        int[] answer = solution(new int[]{95,90,99,99,80,99},new int[]{1,1,1,1,1,1});
+    public static void main(String[] args) {
 
-        for (int num : answer) {
-            System.out.printf("%d ",num);
-        }
+        int[] p = new int[]{95,90,99,99,80,99};
+        int[] q = new int[]{1,1,1,1,1,1};
+
+        int[] a = solution(p,q);
+
     }
 }
