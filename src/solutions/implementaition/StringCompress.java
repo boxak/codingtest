@@ -1,64 +1,60 @@
 package solutions.implementaition;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 
 public class StringCompress {
     public static int solution(String s) {
         int answer = 0;
 
-        int strLen = s.length();
-        int minLen = 10000;
-        for (int len = 1; len <= strLen; len++) {
-            String result = compress(s, len);
-            System.out.println(len + " : " + result + ", " + result.length());
-            if (!result.isEmpty() && result.length() < minLen) {
-                minLen = result.length();
-            }
-        }
-        answer = minLen;
+        if (s.length() == 1) return 1;
+
+        answer = compressStr(s);
+
         return answer;
     }
 
-    public static String compress(String s, int len) {
-        String temp = "";
-        int strLen = s.length();
-        Queue<String> que = new LinkedList<>();
-        int i = 0;
-        for (; i <= strLen - len; i += len) {
-            que.add(s.substring(i, i + len));
-        }
+    static int compressStr(String s) {
+        int answer = Integer.MAX_VALUE;
+        for (int len = 1;len<=s.length()/2;len++) {
+            ArrayList<String> list = sliceStr(s,len);
 
-        if (!s.substring(i).isEmpty()) {
-            que.add(s.substring(i));
-        }
+            String temp = list.get(0);
+            int cnt = 1;
+            StringBuilder sb = new StringBuilder();
 
-        String target = que.peek();
-        que.poll();
-        int count = 1;
-        while (!que.isEmpty()) {
-            String compare = que.peek();
-            que.poll();
-            if (target.equals(compare)) {
-                count++;
-            } else {
-                if (count == 1) {
-                    temp += target;
+            for (int index = 1;index<list.size();index++) {
+                if (temp.equals(list.get(index))) {
+                    cnt++;
                 } else {
-                    temp += (count + target);
+                    if (cnt == 1) sb.append(temp);
+                    else {
+                        sb.append(cnt);
+                        sb.append(temp);
+                    }
+                    temp = list.get(index);
+                    cnt = 1;
                 }
-                target = compare;
-                count = 1;
             }
+
+            if (cnt == 1) sb.append(temp);
+            else {
+                sb.append(cnt);
+                sb.append(temp);
+            }
+
+            if (answer > sb.length()) answer = sb.length();
+        }
+        return answer;
+    }
+
+    static ArrayList<String> sliceStr(String s, int len) {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0;i*len<s.length();i++) {
+            if ((i+1)*len>s.length()) list.add(s.substring(i*len));
+            else list.add(s.substring(i*len,(i+1)*len));
         }
 
-        if (count == 1) {
-            temp += target;
-        } else {
-            temp += (count + target);
-        }
-
-        return temp;
+        return list;
     }
 
     public static void main(String[] args) {
