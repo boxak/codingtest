@@ -17,7 +17,7 @@ public class StringCompress {
         int answer = Integer.MAX_VALUE;
         for (int len = 1;len<=s.length()/2;len++) {
             ArrayList<String> list = sliceStr(s,len);
-
+//zzzz
             String temp = list.get(0);
             int cnt = 1;
             StringBuilder sb = new StringBuilder();
