@@ -29,7 +29,7 @@ public class ACMCraft {
       str = br.readLine();
       st = new StringTokenizer(str," ");
 
-      for (int i = 0;i<N;i++) {
+      for (int i = 1;i<=N;i++) {
         times[i] = Integer.parseInt(st.nextToken());
       }
 
@@ -40,29 +40,23 @@ public class ACMCraft {
         int a = Integer.parseInt(st.nextToken());
         int b = Integer.parseInt(st.nextToken());
 
-        vector.get(a).add(b);
+        vector.get(b).add(a);
       }
-      answers[test++] = findMinSecond(N,K,times,vector);
+      int W = Integer.parseInt(br.readLine());
+      answers[test++] = findMinSecond(N,K,W,times,vector);
     }
 
   }
 
-  static int findMinSecond(int N,int K, int[] times,ArrayList<ArrayList<Integer>> vector) {
+  static int findMinSecond(int N,int K,int W, int[] times,ArrayList<ArrayList<Integer>> vector) {
 
-    int root = findRoot(N,vector);
+    int sum = 0;
+    sum+=times[W];
+    while(true) {
+
+    }
 
     return 0;
   }
 
-  static int findRoot(int N,ArrayList<ArrayList<Integer>> vector) {
-    int[] parents = new int[N+1];
-    for (int i = 0;i<N;i++) parents[i] = i;
-
-    for (int i = 0;i<vector.size();i++) {
-      int parent = i+1;
-      ArrayList<Integer> list = vector.get(i);
-
-    }
-
-  }
 }
