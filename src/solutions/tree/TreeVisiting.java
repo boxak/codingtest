@@ -1,4 +1,4 @@
-package solutions.implementaition;
+package solutions.tree;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,6 +63,6 @@ public class TreeVisiting {
     String right = treeMap.get(parent).right;
     if (!".".equals(left)) visiting3(treeMap, left);
     if (!".".equals(right)) visiting3(treeMap, right);
-    System.out.print(parent);;
+    System.out.print(parent);
   }
 }
