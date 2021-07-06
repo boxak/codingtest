@@ -75,12 +75,12 @@ public class ACMCraft {
 
   }
 
-  static void visit1(int W) {
-    if (vector2.get(W).size()==0) {
-      startNums.add(W);
+  static void visit1(int node) {
+    if (vector2.get(node).size()==0 && !startNums.contains(node)) {
+      startNums.add(node);
     }
-    for (int i = 0;i<vector2.get(W).size();i++) {
-      int next = vector2.get(W).get(i);
+    for (int i = 0;i<vector2.get(node).size();i++) {
+      int next = vector2.get(node).get(i);
       visit1(next);
     }
   }
