@@ -19,6 +19,7 @@ public class ACMCraft {
   static int W;
   static ArrayList<Integer> startNums;
   static int[] needCnts;
+  static boolean[] visited;
 
   public static void main(String[] args) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -64,6 +65,7 @@ public class ACMCraft {
 
       W = Integer.parseInt(br.readLine());
       startNums = new ArrayList<>();
+      visited = new boolean[N+1];
 
       visit1(W);
 
@@ -76,12 +78,15 @@ public class ACMCraft {
   }
 
   static void visit1(int node) {
+    visited[node] = true;
     if (vector2.get(node).size()==0 && !startNums.contains(node)) {
       startNums.add(node);
     }
     for (int i = 0;i<vector2.get(node).size();i++) {
       int next = vector2.get(node).get(i);
-      visit1(next);
+      if (!visited[next]){
+        visit1(next);
+      }
     }
   }
 
