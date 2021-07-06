@@ -18,10 +18,12 @@ public class ACMCraft {
   static int[] delays;
   static int W;
   static ArrayList<Integer> startNums;
+  static int[] needCnts;
 
   public static void main(String[] args) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     int TestCnt = Integer.parseInt(br.readLine());
+    int[] answerList = new int[TestCnt];
 
     for (int test = 0;test<TestCnt;test++) {
       vector1 = new ArrayList<>();
@@ -39,6 +41,7 @@ public class ACMCraft {
         vector2.add(new ArrayList<>());
       }
       delays = new int[N+1];
+      needCnts = new int[N+1];
 
       str = br.readLine();
       st = new StringTokenizer(str," ");
@@ -56,6 +59,7 @@ public class ACMCraft {
 
         vector1.get(a).add(b);
         vector2.get(b).add(a);
+        needCnts[b]++;
       }
 
       W = Integer.parseInt(br.readLine());
@@ -64,8 +68,10 @@ public class ACMCraft {
       visit1(W);
 
       answer = bfs();
-
+      answerList[test] = answer;
     }
+
+    for (int answer : answerList) System.out.println(answer);
 
   }
 
@@ -82,6 +88,27 @@ public class ACMCraft {
   static int bfs() {
     Queue<Integer> que = new LinkedList<>();
     int[] timeToBuild = new int[N+1];
+    for (int num : startNums) {
+      timeToBuild[num] = delays[num];
+      que.add(num);
+    }
+
+    while(!que.isEmpty()) {
+      int node = que.peek();
+      que.poll();
+      for (int i = 0;i<vector1.get(node).size();i++) {
+        int next = vector1.get(node).get(i);
+        if (timeToBuild[next] < timeToBuild[node] + delays[next]) {
+          timeToBuild[next] = timeToBuild[node] + delays[next];
+        }
+        needCnts[next]--;
+        if (needCnts[next] == 0) {
+          que.add(next);
+        }
+      }
+    }
+
+    return timeToBuild[W];
   }
 
 }
