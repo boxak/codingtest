@@ -1,18 +1,22 @@
 package solutions.implementaition;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FindBadUser {
 
   static int[] arr;
-  static ArrayList<String> idList;
+  static String[] idList;
   static int cnt;
+  static ArrayList<ArrayList<String>> repeatCheckList;
 
   public static int solution(String[] user_id, String[] banned_id) {
     int answer = 0;
     cnt = 0;
+    idList = new String[banned_id.length];
+    repeatCheckList = new ArrayList<>();
 
 //    String id = "frodo";
 //
@@ -58,11 +62,50 @@ public class FindBadUser {
   }
 
   static void dfs(int N, int inx, ArrayList<ArrayList<String>> filtered_ids) {
-    if (inx == N) return;
-    for (int i = 0;i<arr[inx];i++) {
-      if (!idList.contains(filtered_ids.get(inx).get(i))) {
-        idList.add(filtered_ids.get(inx).get(i));
+    if (inx == N) {
+      String[] tempIdList = new String[idList.length];
+
+      for (int i = 0;i< idList.length;i++) tempIdList[i] = idList[i];
+
+      Arrays.sort(tempIdList);
+      boolean flag = false;
+      for (int i = 1;i< tempIdList.length;i++) {
+        if (tempIdList[i-1].equals(tempIdList[i])) {
+          flag = true;
+          break;
+        }
       }
+      if (!flag) {
+        for (int i = 0;i< repeatCheckList.size();i++) {
+          boolean flag2 = false;
+          for (int j = 0;j<repeatCheckList.get(i).size();j++) {
+            if (!tempIdList[j].equals(repeatCheckList.get(i).get(j))) {
+              flag2 = true;
+              break;
+            }
+          }
+          if (!flag2) {
+            flag = true;
+            break;
+          }
+        }
+      }
+
+      if (!flag) {
+        repeatCheckList.add(new ArrayList<>());
+        for (int i = 0;i<tempIdList.length;i++) {
+          repeatCheckList.get(repeatCheckList.size()-1).add(tempIdList[i]);
+          System.out.print(tempIdList[i]+" ");
+        }
+        System.out.println();
+        cnt++;
+      }
+
+      return;
+    }
+    for (int i = 0;i<arr[inx];i++) {
+      idList[inx] = filtered_ids.get(inx).get(i);
+      dfs(N,inx+1,filtered_ids);
     }
   }
 
@@ -88,13 +131,13 @@ public class FindBadUser {
         sb.append(tmpStr);
       }
       patterns[i] = sb.toString();
-      System.out.println(patterns[i]);
+      //System.out.println(patterns[i]);
     }
 
     return patterns;
   }
 
   public static void main(String[] args) {
-    solution(new String[]{"frodo", "fradi", "crodo", "abc123", "frodoc"},new String[]{"fr*d*", "abc1**"});
+    System.out.println(solution(new String[]{"frodo", "fradi", "crodo", "abc123", "frodoc"},new String[]{"fr*d*", "*rodo", "******", "******"}));
   }
 }
