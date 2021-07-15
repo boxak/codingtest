@@ -130,7 +130,7 @@ public class MagicianSharkAndBlizzard {
   }
 
   static void breakMarbles(int dir,int speed) {
-    for (int i = 1;i<speed;i++) {
+    for (int i = 1;i<=speed;i++) {
       int r = sharkR + dr[dir]*i;
       int c = sharcC + dc[dir]*i;
       if (r<1 || r>N || c<1 || c>N) break;
@@ -139,7 +139,7 @@ public class MagicianSharkAndBlizzard {
   }
 
   static void moveMarbles() {
-    for (int i = 1;i<N*N-1;i++) {
+    for (int i = 1;i<N*N;i++) {
       int r = positions[i].r;
       int c = positions[i].c;
       if (marbles[r][c] == 0) {
@@ -200,7 +200,7 @@ public class MagicianSharkAndBlizzard {
 
     ArrayList<MarbleInfo> marbleInfos = new ArrayList<>();
 
-    int num = marbles[positions[0].r][positions[0].c];
+    int num = marbles[positions[1].r][positions[1].c];
     int cnt = 1;
 
     for (int i = 2;i<N*N;i++) {
