@@ -1,4 +1,4 @@
-package solutions.implementaition;
+package solutions.simulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
