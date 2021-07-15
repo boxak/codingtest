@@ -10,7 +10,6 @@ public class MagicianSharkAndBlizzard {
 
   static int N,M;
   static int[][] marbles;
-  static int[][] numbers;
   static int[] directions;
   static int[] speeds;
   static Pair[] positions;
@@ -48,7 +47,6 @@ public class MagicianSharkAndBlizzard {
     M = Integer.parseInt(st.nextToken());
 
     marbles = new int[N+1][N+1];
-    numbers = new int[N+1][N+1];
     positions = new Pair[N*N+1];
 
     for (int i = 0;i<=N*N;i++) positions[i] = new Pair(0,0);
@@ -216,7 +214,9 @@ public class MagicianSharkAndBlizzard {
       }
     }
 
-    marbleInfos.add(new MarbleInfo(cnt,num));
+    if (cnt>0) {
+      marbleInfos.add(new MarbleInfo(cnt, num));
+    }
 
     int index = 1;
 
