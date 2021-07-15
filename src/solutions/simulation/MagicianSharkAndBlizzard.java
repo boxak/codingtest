@@ -4,33 +4,43 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class MagicianSharkAndBlizzard {
 
-  static int N,M;
-  static int[][] marbles;
-  static int[] directions;
-  static int[] speeds;
-  static Pair[] positions;
-  static int sharkR,sharcC;
-  // d : 1 - 위, 2 - 아래, 3 - 왼쪽, 4 - 오른쪽
+  static int N;
+  static int M;
+  static int[][] map;
   static int[] dr = {0,-1,1,0,0};
   static int[] dc = {0,0,0,-1,1};
-  static int[] magicStats = {0,0,0};
+  static int[] dirs;
+  static int[] dists;
+  static int[] stats = {0,0,0};
+  static ArrayList<Marble> marbles;
+  static Marble[] positions;
 
-  static class Pair {
+  static class Marble {
     int r;
     int c;
-    Pair(int r,int c) {
+    int num;
+    Marble(int r,int c,int num) {
       this.r = r;
       this.c = c;
+      this.num = num;
+    }
+
+    @Override
+    public boolean equals(Object marble) {
+      return this.r == ((Marble)marble).r && this.c == ((Marble)marble).c;
     }
   }
 
   static class MarbleInfo {
     int cnt;
     int num;
+
     MarbleInfo(int cnt, int num) {
       this.cnt = cnt;
       this.num = num;
@@ -39,51 +49,48 @@ public class MagicianSharkAndBlizzard {
 
   public static void main(String[] args) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
     String str = br.readLine();
     StringTokenizer st = new StringTokenizer(str," ");
-
     N = Integer.parseInt(st.nextToken());
     M = Integer.parseInt(st.nextToken());
 
-    marbles = new int[N+1][N+1];
-    positions = new Pair[N*N+1];
+    map = new int[N+1][N+1];
+    dirs = new int[M];
+    dists = new int[M];
+    marbles = new ArrayList<>();
+    positions = new Marble[N*N];
 
-    for (int i = 0;i<=N*N;i++) positions[i] = new Pair(0,0);
-
-    speeds = new int[M];
-    directions = new int[M];
+    for (int i = 0;i<N*N;i++) positions[i] = new Marble(0,0,0);
 
     for (int i = 1;i<=N;i++) {
       str = br.readLine();
       st = new StringTokenizer(str," ");
       for (int j = 1;j<=N;j++) {
-        marbles[i][j] = Integer.parseInt(st.nextToken());
+        map[i][j] = Integer.parseInt(st.nextToken());
       }
     }
 
     for (int i = 0;i<M;i++) {
       str = br.readLine();
       st = new StringTokenizer(str," ");
-      directions[i] = Integer.parseInt(st.nextToken());
-      speeds[i] = Integer.parseInt(st.nextToken());
-    }
 
-    sharkR = (N+1)/2;
-    sharcC = (N+1)/2;
+      dirs[i] = Integer.parseInt(st.nextToken());
+      dists[i] = Integer.parseInt(st.nextToken());
+    }
 
     giveNumbers();
 
     for (int i = 0;i<M;i++) {
-      blizzard(directions[i],speeds[i]);
+      blizzard(dirs[i],dists[i]);
     }
 
-    System.out.println(magicStats[0]+magicStats[1]*2+magicStats[2]*3);
+    System.out.println(stats[0]+stats[1]*2+stats[2]*3);
+
   }
 
   static void giveNumbers() {
-    int r = sharkR;
-    int c = sharcC;
+    int r = (N+1)/2;
+    int c = (N+1)/2;
     int d = 3;
     int goCount = 0;
     int goCountLimit = 1;
@@ -91,7 +98,10 @@ public class MagicianSharkAndBlizzard {
     // 왼쪽 -> 아래 / -> 오른쪽 -> 위
 
     for (int i = 0;i<N*N;i++) {
-      positions[i] = new Pair(r,c);
+      positions[i] = new Marble(r,c,0);
+      if (map[r][c]!=0) {
+        marbles.add(new Marble(r,c,map[r][c]));
+      }
       r = r + dr[d];
       c = c + dc[d];
       goCount++;
@@ -127,126 +137,144 @@ public class MagicianSharkAndBlizzard {
     groupingMarbles();
   }
 
-  static void breakMarbles(int dir,int speed) {
-    for (int i = 1;i<=speed;i++) {
-      int r = sharkR + dr[dir]*i;
-      int c = sharcC + dc[dir]*i;
+  static void breakMarbles(int dir,int dist) {
+    for (int i = 1;i<=dist;i++) {
+      int r = ((N+1)/2) + dr[dir]*i;
+      int c = ((N+1)/2) + dc[dir]*i;
       if (r<1 || r>N || c<1 || c>N) break;
-      marbles[r][c] = 0;
+
+      int index = marbles.indexOf(new Marble(r,c,map[r][c]));
+      if(index==-1) continue;
+      marbles.set(index, new Marble(r,c,0));
+      map[r][c] = 0;
     }
   }
 
   static void moveMarbles() {
-    for (int i = 1;i<N*N;i++) {
-      int r = positions[i].r;
-      int c = positions[i].c;
-      if (marbles[r][c] == 0) {
-        for (int j = i+1;j<N*N;j++) {
-          int r2 = positions[j].r;
-          int c2 = positions[j].c;
-          if (marbles[r2][c2]!=0) {
-            marbles[r][c] = marbles[r2][c2];
-            marbles[r2][c2] = 0;
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  static boolean explosion() {
-    ArrayList<Pair> list = new ArrayList<>();
-    boolean expolded = false;
-    for (int i = 1;i<N*N;i++) {
-      if (marbles[positions[i].r][positions[i].c]==0) continue;
-      if (list.isEmpty()) {
-        list.add(new Pair(positions[i].r,positions[i].c));
-      } else {
-        Pair last = list.get(list.size()-1);
-        int numInList = marbles[last.r][last.c];
-        int nowNum = marbles[positions[i].r][positions[i].c];
-        if (nowNum == numInList) {
-          list.add(new Pair(positions[i].r,positions[i].c));
-        } else {
-          if (list.size()>=4) {
-            for (Pair pair : list) {
-              marbles[pair.r][pair.c] = 0;
-              magicStats[numInList-1]++;
-            }
-            expolded = true;
-          }
-          list.clear();
-          list.add(new Pair(positions[i].r,positions[i].c));
-        }
-      }
-    }
-
-    if (list.size()>=4) {
-      Pair last = list.get(list.size()-1);
-      int numInList = marbles[last.r][last.c];
-      for (Pair pair : list) {
-        marbles[pair.r][pair.c] = 0;
-        magicStats[numInList-1]++;
-      }
-      expolded = true;
-    }
-
-    return expolded;
-  }
-
-  static void groupingMarbles() {
-
-    ArrayList<MarbleInfo> marbleInfos = new ArrayList<>();
-
-    int num = marbles[positions[1].r][positions[1].c];
-    int cnt = 1;
-
-    for (int i = 2;i<N*N;i++) {
-      int r = positions[i].r;
-      int c = positions[i].c;
-      int nowNum = marbles[r][c];
-      if (num == nowNum) {
-        cnt++;
-      } else {
-        marbleInfos.add(new MarbleInfo(cnt,num));
-        cnt = 1;
-        num = nowNum;
-      }
-    }
-
-    if (cnt>0) {
-      marbleInfos.add(new MarbleInfo(cnt, num));
-    }
-
-    int index = 1;
-
+    ArrayList<Marble> tempArray = new ArrayList<>();
     int[][] tempMap = new int[N+1][N+1];
 
-    for (MarbleInfo marbleInfo : marbleInfos) {
-      int r = positions[index].r;
-      int c = positions[index].c;
+    for (Marble marble : marbles) {
+      if (marble.num!=0) {
+        tempArray.add(new Marble(marble.r, marble.c, marble.num));
+      }
+    }
 
-      tempMap[r][c] = marbleInfo.cnt;
+    marbles.clear();
 
-      index++;
-
-      if (index>=N*N) break;
-
-      r = positions[index].r;
-      c = positions[index].c;
-
-      tempMap[r][c] = marbleInfo.num;
-
-      index++;
-      if (index>=N*N) break;
+    for (int i = 0;i< tempArray.size();i++) {
+      int r = positions[i+1].r;
+      int c = positions[i+1].c;
+      int num = tempArray.get(i).num;
+      tempMap[r][c] = num;
+      marbles.add(new Marble(r,c,num));
     }
 
     for (int i = 1;i<=N;i++) {
       for (int j = 1;j<=N;j++) {
-        marbles[i][j] = tempMap[i][j];
+        map[i][j] = tempMap[i][j];
       }
     }
 
   }
 
+  static boolean explosion() {
+    if (marbles.isEmpty()) return false;
+    boolean expolded = false;
+    Queue<Marble> tempQue = new LinkedList<>();
+
+    Marble initMarble = marbles.get(0);
+
+    tempQue.add(new Marble(initMarble.r, initMarble.c, initMarble.num));
+
+    for (int i = 1;i<marbles.size();i++) {
+      int numInList = tempQue.peek().num;
+      int num = marbles.get(i).num;
+      if (num == numInList) {
+        tempQue.add(new Marble(marbles.get(i).r, marbles.get(i).c, num));
+      } else {
+        if (tempQue.size()>=4) {
+          stats[numInList-1]+=tempQue.size();
+          while(!tempQue.isEmpty()) {
+            int r = tempQue.peek().r;
+            int c = tempQue.peek().c;
+            tempQue.poll();
+
+            int index = marbles.indexOf(new Marble(r,c,numInList));
+            if (index==-1) continue;
+            marbles.set(index, new Marble(r,c,0));
+            map[r][c] = 0;
+          }
+          tempQue.add(new Marble(marbles.get(i).r,marbles.get(i).c,marbles.get(i).num));
+          expolded = true;
+        } else {
+          tempQue.clear();
+          tempQue.add(new Marble(marbles.get(i).r,marbles.get(i).c,marbles.get(i).num));
+        }
+      }
+    }
+
+    if (tempQue.size()>=4) {
+      int numInList = tempQue.peek().num;
+      stats[numInList-1]+=tempQue.size();
+      if (tempQue.size() >= 4) {
+        while (!tempQue.isEmpty()) {
+          int r = tempQue.peek().r;
+          int c = tempQue.peek().c;
+          tempQue.poll();
+
+          int index = marbles.indexOf(new Marble(r, c, numInList));
+          if (index==-1) continue;
+          marbles.set(index, new Marble(r, c, 0));
+          map[r][c] = 0;
+        }
+        expolded = true;
+      }
+    }
+    return expolded;
+  }
+
+  static void groupingMarbles() {
+    if (marbles.isEmpty()) return;
+    ArrayList<MarbleInfo> marbleInfos = new ArrayList<>();
+    marbleInfos.add(new MarbleInfo(1,marbles.get(0).num));
+
+    for (int i = 1;i< marbles.size();i++) {
+      int num = marbles.get(i).num;
+      int cnt = marbleInfos.get(marbleInfos.size()-1).cnt;
+      int numInList = marbleInfos.get(marbleInfos.size()-1).num;
+      if (num == numInList) {
+        marbleInfos.set(marbleInfos.size()-1,new MarbleInfo(cnt+1,num));
+      } else {
+        marbleInfos.add(new MarbleInfo(1,num));
+      }
+    }
+
+    ArrayList<Integer> tempArray = new ArrayList<>();
+
+    for (MarbleInfo marbleInfo : marbleInfos) {
+      tempArray.add(marbleInfo.cnt);
+      tempArray.add(marbleInfo.num);
+    }
+
+    marbles.clear();
+    int[][] tempMap = new int[N+1][N+1];
+
+    int len = tempArray.size() > N*N-1 ? N*N-1 : tempArray.size();
+    for (int i = 0;i<len;i++) {
+      int r = positions[i+1].r;
+      int c = positions[i+1].c;
+      int num = tempArray.get(i);
+
+      marbles.add(new Marble(r,c,num));
+      tempMap[r][c] = num;
+    }
+
+    for (int i = 1;i<=N;i++) {
+      for (int j = 1;j<=N;j++) {
+        map[i][j] = tempMap[i][j];
+      }
+    }
+
+  }
 }
