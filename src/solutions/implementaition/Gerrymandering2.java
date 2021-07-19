@@ -10,6 +10,8 @@ public class Gerrymandering2 {
   static int[][] A;
   static int[][] zone;
   static int answer;
+  static int[] dr = {-1,0,1,0};
+  static int[] dc = {0,1,0,-1};
 
   public static void main(String[] args) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -17,6 +19,7 @@ public class Gerrymandering2 {
 
     A = new int[N+1][N+1];
     zone = new int[N+1][N+1];
+    answer = Integer.MAX_VALUE;
 
     for (int i = 1;i<=N;i++) {
       String str = br.readLine();
@@ -26,26 +29,19 @@ public class Gerrymandering2 {
       }
     }
 
-//    for (int x = 1;x<=N;x++) {
-//      for (int y = 1;y<=N;y++) {
-//        for (int d1 = 1;d1<=N;d1++) {
-//          if (isOut(x+d1,y-d1)) continue;
-//          for (int d2 = 1;d2<=N;d2++) {
-//            if (isOut(x+d2,y+d2) && isOut(x+d1+d2,y-d1+d2)) continue;
-//            gerrymandering(x,y,d1,d2);
-//          }
-//        }
-//      }
-//    }
-
-    gerrymandering(2,4,2,2);
-
-    for (int i = 1;i<=N;i++) {
-      for (int j = 1;j<=N;j++) {
-        System.out.printf("%d ",zone[i][j]);
+    for (int x = 1;x<=N;x++) {
+      for (int y = 1;y<=N;y++) {
+        for (int d1 = 1;d1<=N;d1++) {
+          if (isOut(x+d1,y-d1)) continue;
+          for (int d2 = 1;d2<=N;d2++) {
+            if (isOut(x+d2,y+d2) || isOut(x+d1+d2,y-d1+d2)) continue;
+            gerrymandering(x,y,d1,d2);
+          }
+        }
       }
-      System.out.println();
     }
+
+    System.out.println(answer);
 
   }
 
@@ -84,6 +80,69 @@ public class Gerrymandering2 {
         dir++;
       }
     }
+
+    for (int j = y;j>y-d1;j--) {
+      for (int i = x+(y-j)+1;i<=N;i++) {
+        if (zone[i][j]==5) break;
+        zone[i][j] = 5;
+      }
+    }
+
+    for (int j = y+1;j<y+d2;j++) {
+      for (int i = x+(j-y)+1;i<=N;i++) {
+        if (zone[i][j]==5) break;
+        zone[i][j] = 5;
+      }
+    }
+
+    //1번 선거구
+
+    for (int i = 1;i<x+d1;i++) {
+      for (int j = 1;j<=y;j++) {
+        if (zone[i][j]==0) zone[i][j] = 1;
+      }
+    }
+
+    //2번 선거구
+    for (int i = 1;i<=x+d2;i++) {
+      for (int j = y+1;j<=N;j++) {
+        if (zone[i][j]==0) zone[i][j] = 2;
+      }
+    }
+
+    //3번 선거구
+    for (int i = x+d1;i<=N;i++) {
+      for (int j = 1;j<y-d1+d2;j++) {
+        if (zone[i][j]==0) zone[i][j] = 3;
+      }
+    }
+
+    //4번 선거구
+    for (int i = x+d2+1;i<=N;i++) {
+      for (int j = y-d1+d2;j<=N;j++) {
+        if (zone[i][j]==0) zone[i][j] = 4;
+      }
+    }
+
+    int[] peopleCnt = new int[]{0,0,0,0,0};
+
+    for (int i = 1;i<=N;i++) {
+      for (int j = 1;j<=N;j++) {
+        int cnt = A[i][j];
+        int zoneNum = zone[i][j];
+        peopleCnt[zoneNum-1]+=cnt;
+      }
+    }
+
+    int max = Integer.MIN_VALUE;
+    int min = Integer.MAX_VALUE;
+
+    for (int i = 0;i<5;i++) {
+      if (peopleCnt[i]>max) max = peopleCnt[i];
+      if (peopleCnt[i]<min) min = peopleCnt[i];
+    }
+
+    if (answer>max-min) answer = max - min;
 
   }
 
