@@ -3,7 +3,6 @@ package solutions.simulation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -11,10 +10,10 @@ import java.util.StringTokenizer;
 public class AtomVanishingSimulation {
 
   static int N;
-  static final int ZERO_X = 1005;
-  static final int ZERO_Y = 1005;
+  static final int ZERO_X = 2005;
+  static final int ZERO_Y = 2005;
   static final int[] dx = {0,0,-1,1};
-  static final int[] dy = {-1,1,0,0};
+  static final int[] dy = {1,-1,0,0};
   static Queue<Atom> atoms = new LinkedList<>();
   static int[][] map = new int[2*ZERO_Y][2*ZERO_X];
   static int answer;
@@ -42,8 +41,9 @@ public class AtomVanishingSimulation {
   public static void main(String[] args) throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     int TestCnt = Integer.parseInt(br.readLine());
+    int answers[] = new int[TestCnt];
 
-    for (int test = 1;test<=TestCnt;test++) {
+    for (int test = 0;test<TestCnt;test++) {
 
       for (int i = 0;i<2*ZERO_Y;i++) {
         for (int j = 0;j<2*ZERO_X;j++) {
@@ -65,15 +65,18 @@ public class AtomVanishingSimulation {
         int dir = Integer.parseInt(st.nextToken());
         int energy = Integer.parseInt(st.nextToken());
 
-        atoms.add(new Atom(ZERO_X+x,ZERO_Y+y,dir,energy));
-        map[ZERO_Y+y][ZERO_X+x]++;
+        atoms.add(new Atom(ZERO_X+2*x,ZERO_Y+2*y,dir,energy));
+        map[ZERO_Y+2*y][ZERO_X+2*x]++;
       }
 
       while(!atoms.isEmpty()) {
         simulation();
       }
+      answers[test] = answer;
+    }
 
-      System.out.println("#"+test+" "+answer);
+    for (int i = 0;i<TestCnt;i++) {
+      System.out.println("#"+(i+1)+" "+answers[i]);
     }
 
   }
@@ -94,14 +97,13 @@ public class AtomVanishingSimulation {
       int nx = atom.x;
       int ny = atom.y;
       map[y][x]--;
-      if (isInside(y,x)) {
+      if (isInside(ny,nx)) {
         map[ny][nx]++;
         atoms.add(atom);
       }
     }
 
     queSize = atoms.size();
-    ArrayList<Atom> tempList = new ArrayList<>();
 
     for (int i = 0;i<queSize;i++) {
       Atom atom = atoms.peek();
@@ -112,7 +114,9 @@ public class AtomVanishingSimulation {
 
       if (map[y][x]>1) {
         answer+=energy;
-
+        map[y][x] = 0;
+      } else if (map[y][x]==0) {
+        answer+=energy;
       } else {
         atoms.add(atom);
       }
