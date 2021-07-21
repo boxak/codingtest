@@ -19,7 +19,7 @@ public class MarbleExit {
 	static char[][] map;
 	static boolean isSuccess;
 	static int[] arr;
-	
+	static int[][] pos = new int[2][2];
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -96,8 +96,7 @@ public class MarbleExit {
 	}
 	
 	static boolean moveMarbles(int d) {
-		int[][] pos = new int[2][2];
-		boolean isRedFirst = redFirst(d, pos);
+		boolean isRedFirst = redFirst(d);
 		boolean isBlueInside = false;
 		
 		int temp_r1 = pos[0][0];
@@ -130,7 +129,7 @@ public class MarbleExit {
 			for (int i = 1;i<=10;i++) {
 				int nr = temp_r2 + i*dr[d];
 				int nc = temp_c2 + i*dc[d];
-				if (map[nr][nc]=='#' || map[nr][nc]=='O') {
+				if (map[nr][nc]=='#' || map[nr][nc]=='O' || (nr==temp_r1 && nc==temp_c1)) {
 					if (map[nr][nc]=='O') {
 						if (!isRedFirst) {
 							temp_r2 = nr;
@@ -166,7 +165,7 @@ public class MarbleExit {
 		return isBlueInside;
 	}
 	
-	static boolean redFirst(int d,int[][] pos) {
+	static boolean redFirst(int d) {
 		boolean isRedFirst = false;
 		if (d == 0) {
 			if (r1<=r2) {
