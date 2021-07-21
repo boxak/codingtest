@@ -1,0 +1,39 @@
+package solutions.greedy;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+public class NumberCardGame {
+    public static void main(String args[]) throws Exception {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int N,M;
+        int cards[][] = new int[110][110];
+
+        String str = br.readLine();
+        StringTokenizer st = new StringTokenizer(str, " ");
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        for (int i = 0;i<N;i++) {
+            str = br.readLine();
+            st = new StringTokenizer(str," ");
+            for (int j = 0;j<M;j++) {
+                cards[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        int answer = 0;
+        for (int i = 0;i<N;i++) {
+            int minInRow = 10010;
+            for (int j=0;j<M;j++) {
+                if (cards[i][j]<minInRow) minInRow = cards[i][j];
+            }
+            if (answer<minInRow) answer = minInRow;
+        }
+        System.out.println(answer);
+    }
+}
