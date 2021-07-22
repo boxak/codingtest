@@ -1,8 +1,10 @@
 package solutions.simulation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class RollingDice {
@@ -13,6 +15,8 @@ public class RollingDice {
 	static int[] dc = {0,1,-1,0,0};
 	
 	static int[] dice = new int[6];
+	
+	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -46,9 +50,12 @@ public class RollingDice {
 			moveDice(dirs[i]);
 		}
 		
+		bw.flush();
+		bw.close();
+		
 	}
 	
-	static void moveDice(int dir) {
+	static void moveDice(int dir) throws IOException {
 		int nx = x + dr[dir];
 		int ny = y + dc[dir];
 		if (nx < 0 || nx>=N || ny<0 || ny>=M) return;
@@ -61,7 +68,7 @@ public class RollingDice {
 			dice[5] = map[x][y];
 			map[x][y] = 0;
 		}
-		System.out.println(dice[0]);
+		bw.write(String.valueOf(dice[0])+"\n");
 	}
 	
 	static void arrangeDiceNumber(int dir) {
