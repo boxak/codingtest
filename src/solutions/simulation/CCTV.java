@@ -88,6 +88,18 @@ public class CCTV {
 			int num = pair.num;
 			checkCamera(r,c,num,arr[i]);
 		}
+		
+		int cnt = 0;
+		for (int i = 0;i<N;i++) {
+			for (int j = 0;j<M;j++) {
+				if (map[i][j]==0 && !checked[i][j]) {
+					cnt++;
+				}
+			}
+		}
+		if (cnt<answer) {
+			answer = cnt;
+		}
 	}
 	
 	static void checkCamera(int r,int c,int num,int d) {
@@ -175,17 +187,6 @@ public class CCTV {
 			}
 		}
 		
-		int cnt = 0;
-		for (int i = 0;i<N;i++) {
-			for (int j = 0;j<M;j++) {
-				if (map[i][j]==0 && !checked[i][j]) {
-					cnt++;
-				}
-			}
-		}
-		if (cnt<answer) {
-			answer = cnt;
-		}
 	}
 	
 	static boolean isOut(int r,int c) {
