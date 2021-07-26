@@ -96,15 +96,25 @@ public class FishKing {
 			int nr = r + s*dr[d];
 			int nc = c + s*dc[d];
 			
-			if (d==1 && nr<1) {
-				nr = -nr;
-				if (nr%(R-1)==0 && (nr/(R-1))%2==0) {
-					d = 2;
-					nr = (R-1);
-				} else if ((nr/(R-1))%2==1) {
-					d = 1;
-					nr = 0;
-				} else if ()
+			if (d==3 || d==4) {
+				if (nc<0) {
+					nc = -nc;
+					nc = nc%(2*(C-1));
+					if (nc<=C-1) {
+						d = 3;
+					} else {
+						d = 1;
+						nc = C-nc%(C-1)-1;
+					}
+				} else {
+					nc = nc%(2*(C-1));
+					if (nc<C-1) {
+						d = 1;
+					} else {
+						d = 3;
+						nc = 2*(C-1) - nc;
+					}
+				}
 			}
 			
 		}
