@@ -28,13 +28,13 @@ public class DiceYutNori {
 		
 		makeOrders();
 		
-		dfs(0,0,0,0,0,0,0);
+		dfs(0,0,0,0,0,0,0,0);
 		
 		System.out.println(answer);
 		
 	}
 	
-	static void dfs(int x,int nowpos,int p1,int p2,int p3,int p4,int sum) {
+	static void dfs(int x,int nowpos,int p1,int p2,int p3,int p4,int sum,int number) {
 		if (x==10) {
 			if (sum>answer) answer = sum;
 			return;
@@ -85,17 +85,17 @@ public class DiceYutNori {
 		if (np4>=40) np4 = 0;
 		
 		if (nowpos==0) {
-			dfs(x+1,np1,np1,p2,p3,p4,sum+scores[np1]);
-			dfs(x+1,np2,p1,np2,p3,p4,sum+scores[np2]);
-			dfs(x+1,np3,p1,p2,np3,p4,sum+scores[np3]);
- 			dfs(x+1,np4,p1,p2,p3,np4,sum+scores[np4]);
+			dfs(x+1,np1,np1,p2,p3,p4,sum+scores[np1],1);
+			dfs(x+1,np2,p1,np2,p3,p4,sum+scores[np2],2);
+			dfs(x+1,np3,p1,p2,np3,p4,sum+scores[np3],3);
+ 			dfs(x+1,np4,p1,p2,p3,np4,sum+scores[np4],4);
 		} else {
-			if (nowpos!=p1) dfs(x+1,np1,np1,p2,p3,p4,sum+scores[np1]);
-			if (nowpos!=p2) dfs(x+1,np2,p1,np2,p3,p4,sum+scores[np2]);
-			if (nowpos!=p3) dfs(x+1,np3,p1,p2,np3,p4,sum+scores[np3]); 
-			if (nowpos!=p4) dfs(x+1,np4,p1,p2,p3,np4,sum+scores[np4]);
+ 			if (nowpos!=p1 || number==1) dfs(x+1,np1,np1,p2,p3,p4,sum+scores[np1],1);
+			if (nowpos!=p2 || number==2) dfs(x+1,np2,p1,np2,p3,p4,sum+scores[np2],2);
+			if (nowpos!=p3 || number==3) dfs(x+1,np3,p1,p2,np3,p4,sum+scores[np3],3); 
+			if (nowpos!=p4 || number==4) dfs(x+1,np4,p1,p2,p3,np4,sum+scores[np4],4);
 		}
-	}
+ 	}
 	
 	static void makeOrders() {
 		for (int i = 0;i<19;i++) {
