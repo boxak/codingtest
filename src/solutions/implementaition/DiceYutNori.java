@@ -136,6 +136,9 @@ public class DiceYutNori {
 		scores[30] = 30;
 		scores[31] = 35;
 		
+		orders[24] = 30;
+		scores[24] = 25;
+		
 	}
 	
 }
