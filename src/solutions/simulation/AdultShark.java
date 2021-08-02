@@ -214,11 +214,12 @@ public class AdultShark {
 		int dir = d;
 		boolean find = false;
 		for (int i = 1;i<=4;i++) {
-			int nr = r+dr[i];
-			int nc = c+dc[i];
+			int tempD = priority[d][i];
+			int nr = r+dr[tempD];
+			int nc = c+dc[tempD];
 			if (nr<1 || nr>N || nc<1 || nc>N) continue;
 			if (smells[nr][nc].num==0) {
-				dir = i;
+				dir = tempD;
 				find = true;
 				break;
 			}
