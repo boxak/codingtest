@@ -6,10 +6,11 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class DiceYutNori {
-	static int[] numbers;
-	static int answer;
+	
+	static int[] diceNumbers;
 	static int[] orders;
 	static int[] scores;
+	static int answer;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -17,128 +18,115 @@ public class DiceYutNori {
 		String str = br.readLine();
 		StringTokenizer st = new StringTokenizer(str," ");
 		
-		numbers = new int[10];
-		orders = new int[100];
-		scores = new int[100];
-		answer = Integer.MIN_VALUE;
+		diceNumbers = new int[10];
 		
 		for (int i = 0;i<10;i++) {
-			numbers[i] = Integer.parseInt(st.nextToken());
+			diceNumbers[i] = Integer.parseInt(st.nextToken());
 		}
 		
-		makeOrders();
+		answer = Integer.MIN_VALUE;
 		
-		dfs(0,0,0,0,0,0,0,0);
+		orders = new int[32];
+		scores = new int[33];
+		
+		for (int i = 0;i<=18;i++) {
+			orders[i] = i+1;
+			scores[i] = 2*i;
+		}
+		
+		orders[19] = 31;
+		scores[19] = 38;
+		
+		orders[20] = 21;
+		scores[20] = 13;
+		
+		orders[21] = 22;
+		scores[21] = 16;
+		
+		orders[22] = 28;
+		scores[22] = 19;
+		
+		orders[23] = 24;
+		scores[23] = 22;
+		
+		orders[24] = 28;
+		scores[24] = 24;
+		
+		orders[25] = 26;
+		scores[25] = 28;
+		
+		orders[26] = 27;
+		scores[26] = 27;
+		
+		orders[27] = 28;
+		scores[27] = 26;
+		
+		orders[28] = 29;
+		scores[28] = 25;
+		
+		orders[29] = 30;
+		scores[29] = 30;
+		
+		orders[30] = 31;
+		scores[30] = 35;
+		
+		orders[31] = 32;
+		scores[31] = 40;
+		
+		
+		dfs(0,0,0,0,0,0);
 		
 		System.out.println(answer);
 		
 	}
 	
-	static void dfs(int x,int nowpos,int p1,int p2,int p3,int p4,int sum,int number) {
-		if (x==10) {
-			if (sum>answer) answer = sum;
+	static void dfs(int inx,int p1,int p2,int p3,int p4,int sum) {
+		if (inx==10) {
+			if (answer<sum) answer = sum;
 			return;
 		}
 		
-		int np1 = p1;
-		int np2 = p2;
-		int np3 = p3;
-		int np4 = p4;
+		int go = diceNumbers[inx];
 		
-		for (int i = 0;i<numbers[x];i++) {
-			if (i == 0) {
-				if (np1==5 || np1==10 || np1==15) {
-					if (np1==5) np1 = 21;
-					if (np1==10) np1 = 25;
-					if (np1==15) np1 = 27;
-				} else np1 = orders[np1];
-				
-				if (np2==5 || np2==10 || np2==15) {
-					if (np2==5) np2 = 21;
-					if (np2==10) np2 = 25;
-					if (np2==15) np2 = 27;
-				} else np2 = orders[np2];
-				
-				if (np3==5 || np3==10 || np3==15) {
-					if (np3==5) np3 = 21;
-					if (np3==10) np3 = 25;
-					if (np3==15) np3 = 27;
-				} else np3 = orders[np3];
-				
-				
-				if (np4==5 || np4==10 || np4==15) {
-					if (np4==5) np4 = 21;
-					if (np4==10) np4 = 25;
-					if (np4==15) np4 = 27;
-				} else np4 = orders[np4];
+		int np1 = next(p1,go);
+		int np2 = next(p2,go);
+		int np3 = next(p3,go);
+		int np4 = next(p4,go);
+		
+		if (p1!=32) {
+			if (np1==32) dfs(inx+1,np1,p2,p3,p4,sum);
+			else if (np1<32 && np1!=p2 && np1!=p3 && np1!=p4) dfs(inx+1,np1,p2,p3,p4,sum+scores[np1]);
+		}
+		
+		if (p2!=32) {
+			if (np2==32) dfs(inx+1,p1,np2,p3,p4,sum);
+			else if (np2<32 && np2!=p1 && np2!=p3 && np2!=p4) dfs(inx+1,p1,np2,p3,p4,sum+scores[np2]);
+		}
+		
+		if (p3!=32) {
+			if (np3==32) dfs(inx+1,p1,p2,np3,p4,sum);
+			else if (np3<32 && np3!=p1 && np3!=p2 && np3!=p4) dfs(inx+1,p1,p2,np3,p4,sum+scores[np3]);
+		}
+		
+		if (p4!=32) {
+			if (np4==32) dfs(inx+1,p1,p2,p3,np4,sum);
+			else if (np4<32 && np4!=p1 && np4!=p2 && np4!=p3) dfs(inx+1,p1,p2,p3,np4,sum+scores[np4]);
+		}
+		
+	}
+	
+	static int next(int p,int go) {
+		for (int i = 1;i<=go;i++) {
+			if (p==32) break;
+			if (i==1 && (p==5 || p==10 || p==15)) {
+				if (p==5) p = 20;
+				else if (p==10) p = 23;
+				else if (p==15) p = 25;
 			} else {
-				np1 = orders[np1];
-				np2 = orders[np2];
-				np3 = orders[np3];
-				np4 = orders[np4];
+				p = orders[p];
 			}
 		}
-		
-		if (np1>=40) np1 = 0;
-		if (np2>=40) np2 = 0;
-		if (np3>=40) np3 = 0;
-		if (np4>=40) np4 = 0;
-		
-		if (nowpos==0) {
-			dfs(x+1,np1,np1,p2,p3,p4,sum+scores[np1],1);
-			dfs(x+1,np2,p1,np2,p3,p4,sum+scores[np2],2);
-			dfs(x+1,np3,p1,p2,np3,p4,sum+scores[np3],3);
- 			dfs(x+1,np4,p1,p2,p3,np4,sum+scores[np4],4);
-		} else {
- 			if (nowpos!=p1 || number==1) dfs(x+1,np1,np1,p2,p3,p4,sum+scores[np1],1);
-			if (nowpos!=p2 || number==2) dfs(x+1,np2,p1,np2,p3,p4,sum+scores[np2],2);
-			if (nowpos!=p3 || number==3) dfs(x+1,np3,p1,p2,np3,p4,sum+scores[np3],3); 
-			if (nowpos!=p4 || number==4) dfs(x+1,np4,p1,p2,p3,np4,sum+scores[np4],4);
-		}
- 	}
-	
-	static void makeOrders() {
-		for (int i = 0;i<19;i++) {
-			orders[i] = i+1;
-			scores[i] = 2*i;
-		}
-		
-		orders[20] = 40;
-		scores[20] = 40;
-		
-		for (int i = 40;i<50;i++) orders[i] = i+1;
-		
-		orders[21] = 22;
-		orders[22] = 23;
-		orders[23] = 24;
-		
-		scores[21] = 13;
-		scores[22] = 16;
-		scores[23] = 19;
-		
-		orders[25] = 26;
-		orders[26] = 24;
-		
-		scores[25] = 22;
-		scores[26] = 24;
-		
-		orders[27] = 28;
-		orders[28] = 29;
-		orders[29] = 24;
-		
-		scores[27] = 28;
-		scores[28] = 27;
-		scores[29] = 26;
-		
-		orders[30] = 31;
-		orders[31] = 20;
-		
-		scores[30] = 30;
-		scores[31] = 35;
-		
-		orders[24] = 30;
-		scores[24] = 25;
-		
+		return p;
 	}
 	
 }
