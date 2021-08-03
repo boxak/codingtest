@@ -9,43 +9,22 @@ import java.util.StringTokenizer;
 // 복습이 필요한 문제!
 public class Dummy {
 
-    static int N,K;
+    static int N,K,L;
+    static int[][] map;
+    static int[] changeDirs;
     static int[] dr = {-1,0,1,0};
     static int[] dc = {0,1,0,-1};
-    static int[][] map;
-    static int answer;
-    static ArrayList<Pair> snake;
+    static ArrayList<int[]> snake;
     static int dir;
-    static int L;
-    static ArrayList<Dir> changeDir;
+    static boolean isEnd = false;
 
-    static class Dir {
-        int time;
-        String dir;
-        Dir(int x,String y) {
-            time = x;
-            dir = y;
-        }
-    }
-
-    static class Pair {
-        int r;
-        int c;
-        Pair(int x,int y) {
-            r = x;
-            c = y;
-        }
-    }
-
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         K = Integer.parseInt(br.readLine());
 
         map = new int[N+1][N+1];
         snake = new ArrayList<>();
-        answer = 0;
-        changeDir = new ArrayList<>();
 
         for (int i = 0;i<K;i++) {
             String str = br.readLine();
@@ -56,93 +35,106 @@ public class Dummy {
             map[r][c] = 2;
         }
 
-        int L = Integer.parseInt(br.readLine());
+        L = Integer.parseInt(br.readLine());
+        changeDirs = new int[10010];
 
         for (int i = 0;i<L;i++) {
             String str = br.readLine();
             StringTokenizer st = new StringTokenizer(str," ");
-            int x = Integer.parseInt(st.nextToken());
-            String y = st.nextToken();
-            changeDir.add(new Dir(x,y));
+            int X = Integer.parseInt(st.nextToken());
+            String c = st.nextToken();
+            if ("L".equals(c)) {
+                changeDirs[X] = -1;
+            } else {
+                changeDirs[X] = 1;
+            }
         }
 
-        snake.add(new Pair(1,1));
-        map[1][1] = 1;
         dir = 1;
+        snake.add(new int[]{1,1});
+        map[1][1] = 1;
+
+        int time = 0;
+        while(!isEnd) {
+            time++;
+            simulation(time);
+            //draw(time);
+        }
+
+        System.out.println(time);
+    }
+
+    static void draw(int time) {
+        System.out.println("#time : "+time+", dir : "+dir);
+        for (int i = 1;i<=N;i++) {
+            for (int j = 1;j<=N;j++) {
+                System.out.printf("%d ",map[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    static void simulation(int time) {
         boolean eatApple = false;
-        int inx = 0;
+        int lastR = snake.get(0)[0];
+        int lastC = snake.get(0)[1];
 
-        while(true) {
-            answer++;
-            eatApple = false;
-            int hr = snake.get(0).r;
-            int hc = snake.get(0).c;
+        int nhr = lastR + dr[dir];
+        int nhc = lastC + dc[dir];
 
-            int nhr = hr+dr[dir];
-            int nhc = hc+dc[dir];
+        if (nhr<1 || nhr>N || nhc<1 || nhc>N) {
+            isEnd = true;
+        } else if (map[nhr][nhc]==1) {
+            isEnd = true;
+        }
+        if (isEnd) return;
 
-            if (nhr<1 || nhr>N || nhc<1 || nhc>N) {
-                break;
-            } else if (map[nhr][nhc] == 1) break;
+        snake.set(0,new int[]{nhr,nhc});
+        map[lastR][lastC] = 0;
 
-            if (map[nhr][nhc] == 2) {
-                map[nhr][nhc] = 0;
+        for (int i = 1;i<snake.size();i++) {
+            int[] point = snake.get(i);
+            int r = point[0];
+            int c = point[1];
+
+            int nr = lastR;
+            int nc = lastC;
+            lastR = r;
+            lastC = c;
+
+            map[r][c] = 0;
+            snake.set(i,new int[]{nr,nc});
+        }
+
+        for (int i = 0;i<snake.size();i++) {
+            int[] point = snake.get(i);
+            int r = point[0];
+            int c = point[1];
+
+            if (map[r][c]==2) {
                 eatApple = true;
-            }
-            ArrayList<Pair> temp = new ArrayList<>();
-            map[nhr][nhc] = 1;
-            map[hr][hc] = 0;
-            temp.add(new Pair(nhr,nhc));
-
-            if (answer == changeDir.get(inx).time) {
-                if ("L".equals(changeDir.get(inx).dir)) {
-                    dir--;
-                    if (dir == -1) dir = 3;
-                } else {
-                    dir = (dir+1)%4;
-                }
-                inx = inx==changeDir.size()-1 ? inx : inx+1;
-            }
-
-            int lastR = hr;
-            int lastC = hc;
-
-            for (int i = 1;i<snake.size();i++) {
-                int r = snake.get(i-1).r;
-                int c = snake.get(i-1).c;
-
-                int rr = snake.get(i).r;
-                int cc = snake.get(i).c;
-
-                if (i == snake.size()-1){
-                    lastR = rr;
-                    lastC = cc;
-                }
-
-                temp.add(new Pair(r,c));
-                map[rr][cc] = 0;
+                map[r][c] = 1;
+            } else if (map[r][c]==1) {
+                isEnd = true;
+                break;
+            } else {
                 map[r][c] = 1;
             }
-
-            if (eatApple) {
-                temp.add(new Pair(lastR,lastC));
-                map[lastR][lastC] = 1;
-            }
-
-            snake.clear();
-            for (Pair pair : temp) snake.add(new Pair(pair.r,pair.c));
-
-//            System.out.println(answer);
-//            for (int i = 1;i<=N;i++) {
-//                for (int j = 1;j<=N;j++) {
-//                    System.out.printf("%d ",map[i][j]);
-//                }
-//                System.out.println();
-//            }
-//            System.out.println();
-
         }
 
-        System.out.println(answer);
+        if (eatApple) {
+            map[lastR][lastC] = 1;
+            snake.add(new int[]{lastR,lastC});
+        }
+
+        if (changeDirs[time]!=0) {
+            if (changeDirs[time]==-1) {
+                dir = dir == 0 ? 3 : dir-1;
+            } else {
+                dir = (dir+1)%4;
+            }
+        }
     }
+
 }

@@ -28,12 +28,12 @@ public class Tuple {
       if (s.charAt(i)>='0' && s.charAt(i)<='9') {
         sb.append(s.charAt(i));
       } else if(s.charAt(i)==',') {
-        if (!sb.isEmpty()) { //프로그래머스엔 sb.isEmpty() 메서드가 안먹히는듯.
+        if (sb.length()!=0) { //프로그래머스엔 sb.isEmpty() 메서드가 안먹히는듯.
           tmpList.add(Integer.parseInt(sb.toString()));
           sb = new StringBuilder();
         }
       } else if(s.charAt(i)=='}') {
-        if (!sb.isEmpty()) {
+        if (sb.length()!=0) {
           tmpList.add(Integer.parseInt(sb.toString()));
           sb = new StringBuilder();
           list.add(new TupleList(tmpList));
