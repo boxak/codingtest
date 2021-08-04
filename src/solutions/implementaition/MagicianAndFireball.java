@@ -26,9 +26,7 @@ public class MagicianAndFireball {
 	}
 	
 	static int N,M,K;
-	static Fireball[][] map;
 	static Queue<Fireball>[][] cmap1;
-	static Fireball[][] cmap2;
 	static Queue<Fireball> que;
 	static int[] dr = {-1,-1,0,1,1,1,0,-1};
 	static int[] dc = {0,1,1,1,0,-1,-1,-1};
@@ -44,10 +42,7 @@ public class MagicianAndFireball {
 		M = Integer.parseInt(st.nextToken());
 		K = Integer.parseInt(st.nextToken());
 		answer = 0;
-		
-		map = new Fireball[N][N];
 		cmap1 = new Queue[N][N];
-		cmap2 = new Fireball[N][N];
 		que = new LinkedList<>();
 		
 		for (int i = 0;i<M;i++) {
@@ -60,17 +55,14 @@ public class MagicianAndFireball {
 			int d = Integer.parseInt(st.nextToken());
 			
 			que.add(new Fireball(r-1,c-1,m,s,d));
-			map[r][c] = new Fireball(r-1,c-1,m,s,d);
 		}
 		
 		for (int time = 0;time<K;time++) {
 			simulation();
 		}
 		
-		for (int i = 0;i<N;i++) {
-			for (int j = 0;j<N;j++) {
-				answer+=map[i][j].m;
-			}
+		for (Fireball fireball : que) {
+			answer+=fireball.m;
 		}
 		
 		System.out.println(answer);
@@ -99,21 +91,23 @@ public class MagicianAndFireball {
 			
 			que.poll();
 			
-			int nr = r + dr[d];
-			int nc = c + dc[d];
+			int nr = r + s*dr[d];
+			int nc = c + s*dc[d];
 			
 			if (nr>=0) {
 				nr = nr%N;
 			} else if (nr<0) {
-				nr = -(nr+1);
-				nr = nr%N;
+				nr = -nr;
+				nr = N - nr%N;
+				if (nr==N) nr = 0;
 			}
 			
 			if (nc>=0) {
 				nc = nc%N;
 			} else if (nc<0) {
-				nc = -(nc+1);
-				nc = nc%N;
+				nc = -nc;
+				nc = N - nc%N;
+				if (nc==N) nc = 0;
 			}
 			
 			cmap1[nr][nc].add(new Fireball(nr,nc,m,s,d));
@@ -124,7 +118,11 @@ public class MagicianAndFireball {
 	static void arrange() {
 		for (int i = 0;i<N;i++) {
 			for (int j = 0;j<N;j++) {
-				if (cmap1[i][j].size()>0) {
+				if (cmap1[i][j].size()==1) {
+					Fireball fireball = cmap1[i][j].peek();
+					que.add(new Fireball(fireball.r,fireball.c,fireball.m,fireball.s,fireball.d));
+				}
+				if (cmap1[i][j].size()>1) {
 					Queue<Fireball> tempQue = cmap1[i][j];
 					int sumM = 0;
 					int sumS = 0;
@@ -135,10 +133,28 @@ public class MagicianAndFireball {
 						int m = tempQue.peek().m;
 						int s = tempQue.peek().s;
 						int d = tempQue.peek().d;
+						tempQue.poll();
 						sumM+=m;
 						sumS+=s;
 						if (d%2==0) cntEven++;
 						if (d%2==1) cntOdd++;
+					}
+					
+					int mm = sumM/5;
+					int ss = sumS/cnt;
+					
+					if (mm>0) {
+						if (cntEven==0 || cntOdd==0) {
+							que.add(new Fireball(i,j,mm,ss,0));
+							que.add(new Fireball(i,j,mm,ss,2));
+							que.add(new Fireball(i,j,mm,ss,4));
+							que.add(new Fireball(i,j,mm,ss,6));
+						} else {
+							que.add(new Fireball(i,j,mm,ss,1));
+							que.add(new Fireball(i,j,mm,ss,3));
+							que.add(new Fireball(i,j,mm,ss,5));
+							que.add(new Fireball(i,j,mm,ss,7));
+						}
 					}
 				}
 			}
