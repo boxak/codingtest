@@ -90,6 +90,8 @@ public class SharkClass2 {
     		st = new StringTokenizer(str," ");
     		for (int j = 1;j<=N;j++) {
     			map[i][j] = Integer.parseInt(st.nextToken());
+    			if (map[i][j]==-1) map[i][j] = 7;
+    			if (map[i][j]==0) map[i][j] = 6;
     		}
     	}
     	
@@ -141,7 +143,7 @@ public class SharkClass2 {
     	ArrayList<Pair> list = blockList.get(0).list;
     	int cnt = list.size();
     	for (Pair pair : list) {
-    		map[pair.r][pair.c] = -2;
+    		map[pair.r][pair.c] = 0;
     	}
     	answer+=cnt*cnt;
     }
@@ -159,7 +161,7 @@ public class SharkClass2 {
     		int nr = r+dr[d];
     		int nc = c+dc[d];
     		if (isOut(nr,nc)) continue;
-    		if (!visited[nr][nc] && (map[nr][nc]==num || map[nr][nc]==0)) {
+    		if (!visited[nr][nc] && (map[nr][nc]==num || map[nr][nc]==6)) {
     			dfs(num,nr,nc);
     		}
     	}
@@ -168,19 +170,19 @@ public class SharkClass2 {
     static void gravityWork() {
     	for (int j = 1;j<=N;j++) {
 	    	for (int i = N-1;i>=1;i--) {
-	    		if (map[i][j]!=-2 && map[i][j]!=-1) {
+	    		if (map[i][j]!=0 && map[i][j]!=7) {
 	    			int r = i;
 	    			int num = map[i][j];
 	    			boolean flag = false;
 	    			for (int k = i+1;k<=N;k++) {
-	    				if (map[k][j]!=-2) {
+	    				if (map[k][j]!=0) {
 	    					r = k-1;
 	    					flag = true;
 	    					break;
 	    				}
 	    			}
 	    			if (!flag) r = N;
-	    			map[i][j] = -2;
+	    			map[i][j] = 0;
 	    			map[r][j] = num;
 	    		}
 	    	}
