@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.StringTokenizer;
 
 public class SharkClass2 {
@@ -15,60 +14,41 @@ public class SharkClass2 {
     static int[][] map;
     static int[][] cmap;
     static boolean[][] visited;
-    static ArrayList<BlockGroup> blockList;
-    static ArrayList<Pair> tempList;
-    static boolean stop;
     static int answer;
-    static int cntRainbow;
+    static int area;
+    static int cnt;
+    static boolean stop;
+    static ArrayList<Pair> list;
+    static int rr;
+    static int cc;
     
     static class Pair implements Comparable<Pair>{
     	int r;
     	int c;
-    	int color;
-    	int isRainbow;
+    	int rainbowCnt;
+    	int area;
     	
-    	Pair(int r,int c,int color,int isRainbow) {
-    		this.r = r;
-    		this.c = c;
-    		this.color = color;
-    		this.isRainbow = isRainbow;
+    	Pair(int x,int y,int z,int w) {
+    		r = x;
+    		c = y;
+    		rainbowCnt = z;
+    		area = w;
     	}
     	
     	@Override
     	public int compareTo(Pair pair) {
-    		if (this.isRainbow==pair.isRainbow) {
-    			if (this.r==pair.r) {
-    				return this.c - pair.c;
-    			} else return this.r - pair.r;
-    		} else return this.isRainbow - pair.isRainbow;
+    		if (this.area==pair.area) {
+    			if (this.rainbowCnt==pair.rainbowCnt) {
+    				if (this.r==pair.r) {
+    					return pair.c - this.c;
+    				} else return pair.r - this.r;
+    			} else return pair.rainbowCnt - this.rainbowCnt;
+    		} else return pair.area - this.area;
     	}
     	
     }
     
-    static class BlockGroup implements Comparable<BlockGroup>{
-    	int rainbowCnt;
-    	ArrayList<Pair> list;
-    	
-    	BlockGroup(int raindbowCnt,ArrayList<Pair> list) {
-    		this.rainbowCnt = rainbowCnt;
-    		this.list = list;
-    	}
-    	
-    	@Override
-    	public int compareTo(BlockGroup blockGroup) {
-    		Pair pair1 = this.list.get(0);
-    		Pair pair2 = blockGroup.list.get(0);
-    		if (this.list.size()==blockGroup.list.size()) {
-    			if (this.rainbowCnt==blockGroup.rainbowCnt) {
-    				if (pair2.r==pair1.r) {
-    					return pair2.c-pair1.c;
-    				} else return pair2.r-pair1.r;
-    			} else return blockGroup.rainbowCnt - this.rainbowCnt;
-    		} else return blockGroup.list.size() - this.list.size();
-    	}
-    }
-    
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
     	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
     	String str = br.readLine();
@@ -80,112 +60,110 @@ public class SharkClass2 {
     	map = new int[N+1][N+1];
     	cmap = new int[N+1][N+1];
     	visited = new boolean[N+1][N+1];
-    	blockList = new ArrayList<>();
     	stop = false;
-    	answer = 0;
+    	rr = -1;
+    	cc = -1;
     	
-    	// -1 : 검은색 블록, 0 : 무지개, 1 ~ M : 일반, -2 : 빈 칸
     	for (int i = 1;i<=N;i++) {
     		str = br.readLine();
-    		st = new StringTokenizer(str," ");
+        	st = new StringTokenizer(str," ");
     		for (int j = 1;j<=N;j++) {
     			map[i][j] = Integer.parseInt(st.nextToken());
-    			if (map[i][j]==-1) map[i][j] = 7;
-    			if (map[i][j]==0) map[i][j] = 6;
     		}
     	}
     	
     	while(true) {
-    		findBlockGroup();
-    		printArr("");
+    		scan();
+    		//print("scan");
     		if (stop) break;
-    		removeBiggestGroup();
-    		printArr("remove");
-    		gravityWork();
-    		printArr("gravity");
+    		remove(map[rr][cc],rr,cc);
+    		//print("remove");
+    		gravity();
+    		//print("gravity1");
     		rotate();
-    		printArr("rotate");
-    		gravityWork();
-    		printArr("gravity");
-    		System.out.println("Answer : "+answer);
+    		//print("rotate");
+    		gravity();
+    		//print("gravity2");
+    		//System.out.println(answer);
     	}
     	
     	System.out.println(answer);
+    	
     }
     
-    static void findBlockGroup() {
+    static void scan() {
+    	list = new ArrayList<>();
+    	initVisit(false);
     	for (int i = 1;i<=N;i++) {
     		for (int j = 1;j<=N;j++) {
-    			visited[i][j] = false;
-    		}
-    	}
-    	
-    	blockList.clear();
-    	
-    	for (int i = 1;i<=N;i++) {
-    		for (int j = 1;j<=N;j++) {
-    			if (map[i][j]>=1 && map[i][j]<=M && !visited[i][j]) {
-    				tempList = new ArrayList<>();
-    				cntRainbow = 0;
-    				dfs(map[i][j],i,j);
-    				if (tempList.size()<2) continue;
-    				Collections.sort(tempList);
-    				blockList.add(new BlockGroup(cntRainbow,tempList));
+    			if (!visited[i][j] && map[i][j]>0) {
+    				area = 0;
+    				cnt = 0;
+    				initVisit(true);
+    				dfs1(map[i][j],i,j);
+    				if (area>=2) {
+    					list.add(new Pair(i,j,cnt,area));
+    				}
     			}
     		}
     	}
-    	
-    	if (blockList.size()==0) stop = true;
+    	if (list.size()==0) {
+    		stop = true;
+    		return;
+    	}
+    	Collections.sort(list);
+    	rr = list.get(0).r;
+    	cc = list.get(0).c;
+    	answer+=list.get(0).area*list.get(0).area;
     }
     
-    static void removeBiggestGroup() {
-    	Collections.sort(blockList);
-    	ArrayList<Pair> list = blockList.get(0).list;
-    	int cnt = list.size();
-    	for (Pair pair : list) {
-    		map[pair.r][pair.c] = 0;
-    	}
-    	answer+=cnt*cnt;
-    }
-    
-    static void dfs(int num,int r,int c) {
-    	visited[r][c] = true;
-    	if (map[r][c] == 0) {
-    		tempList.add(new Pair(r,c,0,1));
-    		cntRainbow++;
-    	} else {
-    		tempList.add(new Pair(r,c,num,0));
-    	}
-    	
+    static void remove(int num,int r,int c) {
+    	map[r][c] = -2;
     	for (int d = 0;d<4;d++) {
     		int nr = r+dr[d];
     		int nc = c+dc[d];
     		if (isOut(nr,nc)) continue;
-    		if (!visited[nr][nc] && (map[nr][nc]==num || map[nr][nc]==6)) {
-    			dfs(num,nr,nc);
+    		if (map[nr][nc]==0 || map[nr][nc]==num) {
+    			remove(num,nr,nc);
     		}
     	}
     }
     
-    static void gravityWork() {
+    static void dfs1(int num,int r,int c) {
+    	visited[r][c] = true;
+    	area++;
+    	if (map[r][c]==0) cnt++;
+    	for (int d = 0;d<4;d++) {
+    		int nr = r+dr[d];
+    		int nc = c+dc[d];
+    		if (isOut(nr,nc)) continue;
+    		if (!visited[nr][nc] && (map[nr][nc]==0 || map[nr][nc]==num)) {
+    			dfs1(num,nr,nc);
+    		}
+    	}
+    }
+    
+    static boolean isOut(int r,int c) {
+    	return r<1 || r>N || c<1 || c>N;
+    }
+    
+    static void gravity() {
     	for (int j = 1;j<=N;j++) {
-	    	for (int i = N-1;i>=1;i--) {
-	    		if (map[i][j]!=0 && map[i][j]!=7) {
-	    			int r = i;
-	    			int num = map[i][j];
+    		for (int i = N-1;i>=1;i--) {
+    			if (map[i][j]!=-2 && map[i][j]!=-1) {
 	    			boolean flag = false;
+	    			int num = map[i][j];
+	    			map[i][j] = -2;
+	    			int r = N;
 	    			for (int k = i+1;k<=N;k++) {
-	    				if (map[k][j]!=0) {
+	    				if (map[k][j]!=-2) {
 	    					r = k-1;
-	    					flag = true;
 	    					break;
 	    				}
 	    			}
-	    			if (!flag) r = N;
-	    			map[i][j] = 0;
 	    			map[r][j] = num;
-	    		}
-	    	}
+    			}
+    		}
     	}
     }
     
@@ -203,18 +181,36 @@ public class SharkClass2 {
     	}
     }
     
-    static boolean isOut(int r,int c) {
-    	return r<1 || r>N || c<1 || c>N;
+    static void initVisit(boolean flag) {
+    	if (!flag) {
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= N; j++) {
+                    visited[i][j] = false;
+                }
+            }
+        } else {
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= N; j++) {
+                    if (map[i][j]==0) {
+                        visited[i][j] = false;
+                    }
+                }
+            }
+        }
     }
     
-    static void printArr(String str) {
+    static void print(String str) {
     	System.out.println(str);
     	for (int i = 1;i<=N;i++) {
     		for (int j = 1;j<=N;j++) {
-    			System.out.printf("%d ",map[i][j]);
+    			if (map[i][j]==-2) System.out.printf("%d ",0);
+    			else if (map[i][j]==-1) System.out.printf("%d ",7);
+    			else if (map[i][j]==0) System.out.printf("%d ",6);
+    			else System.out.printf("%d ",map[i][j]);
     		}
     		System.out.println();
     	}
     	System.out.println();
+    	
     }
 }
