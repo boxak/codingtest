@@ -134,11 +134,15 @@ public class MagicianSharkAndBlizzard {
 	static void simulation() {
 		for (int time = 0;time<M;time++) {
 			magic(time);
+			//print("magic");
 			move();
+			//print("move");
 			while(explosion()) {
 				move();
+				//print("move");
 			}
 			grouping();
+			//print("grouping");
 		}
 	}
 	
@@ -201,6 +205,7 @@ public class MagicianSharkAndBlizzard {
 							map[r][c] = 0;
 						}
 					}
+					inxList.clear();
 					inxList.add(i+1);
 					seqNum = marbleList.get(i);
 				}
@@ -217,6 +222,7 @@ public class MagicianSharkAndBlizzard {
 			}
 			
 		}
+		//print("explosion");
 		return flag;
 	}
 	
