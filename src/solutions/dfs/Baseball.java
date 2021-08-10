@@ -3,6 +3,7 @@ package solutions.dfs;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Baseball {
 
@@ -22,6 +23,14 @@ public class Baseball {
     	arr = new int[10];
     	checked = new boolean[10];
     	answer = 0;
+    	
+    	for (int i = 1;i<=N;i++) {
+    		String str = br.readLine();
+    		StringTokenizer st = new StringTokenizer(str," ");
+    		for (int j = 1;j<=9;j++) {
+    			points[i][j] = Integer.parseInt(st.nextToken());
+    		}
+    	}
     	
     	//4번째에 치는 타자는 1번 타자.
     	arr[4] = 1;
@@ -67,10 +76,36 @@ public class Baseball {
     		while(out<3) {
     			int player = arr[runner];
     			int result = points[ining][player];
-    			if ()
+    			if (result==0) {
+    				out++;
+    			} else if (result==1) {
+    				totalScore+=base[2];
+    				base[2] = base[1];
+    				base[1] = base[0];
+    				base[0] = 1;
+    			} else if (result==2) {
+    				totalScore+=base[2]+base[1];
+    				base[2] = base[0];
+    				base[1] = 1;
+    				base[0] = 0;
+    			} else if (result==3) {
+    				totalScore+=base[2]+base[1]+base[0];
+    				base[2] = 1;
+    				base[1] = 0;
+    				base[0] = 0;
+    			} else if (result==4) {
+    				totalScore+=base[2]+base[1]+base[0]+1;
+    				base[2] = 0;
+    				base[1] = 0;
+    				base[0] = 0;
+    			}
+    			runner++;
+    			if (runner==10) runner = 1;
     		}
     		
     	}
+    	
+    	if (totalScore>answer) answer = totalScore;
     	
     }
 	
