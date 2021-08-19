@@ -69,6 +69,8 @@ public class PinballGame {
 				}
 			}
 			
+			simulation(1,1,2);
+			
 			answers[test] = answer;
 			
 		}
@@ -90,11 +92,11 @@ public class PinballGame {
 			} else if (map[r][c] >= 6) {
 				int num = map[r][c];
 				if (warmHoles[num].r1 == r && warmHoles[num].c1 == c) {
-					r = warmHoles[num].r1;
-					c = warmHoles[num].c1;
-				} else {
 					r = warmHoles[num].r2;
 					c = warmHoles[num].c2;
+				} else {
+					r = warmHoles[num].r1;
+					c = warmHoles[num].c1;
 				}
 			}
 
@@ -102,10 +104,8 @@ public class PinballGame {
 			c = c + dc[dir];
 			
 			if (r<1 || r>N || c<1 || c>N) {
-				dir = (dir+2)%4;
-				r = r + dr[dir];
-				c = c + dc[dir];
-				score++;
+				score = 2*score+1;
+				break;
 			}
 
 			if ((r == sr && c == sc) || map[r][c] == -1) break;
