@@ -7,155 +7,160 @@ import java.util.StringTokenizer;
 
 public class BuildAirstrip {
 
-  static int N,X;
-  static int[][] map;
-  static int[][] load1;
-  static int[][] load2;
-
-  public static void main(String[] args) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    //BufferedReader br = new BufferedReader(new FileReader(new File("C:\\Users\\enliple\\Downloads\\sample_input (3).txt")));
-
-    int TestCnt = Integer.parseInt(br.readLine());
-
-    for (int test=1;test<=TestCnt;test++) {
-      String str = br.readLine();
-      StringTokenizer st = new StringTokenizer(str," ");
-
-      N = Integer.parseInt(st.nextToken());
-      X = Integer.parseInt(st.nextToken());
-      map = new int[N+1][N+1];
-      load1 = new int[N+1][N+1];
-      load2 = new int[N+1][N+1];
-      for (int i = 1;i<=N;i++) {
-        str = br.readLine();
-        st = new StringTokenizer(str," ");
-        for (int j = 1;j<=N;j++) {
-          map[i][j] = Integer.parseInt(st.nextToken());
-        }
-      }
-
-      int answer = getAirstripCnt();
-
-      System.out.println("#"+test+" "+answer);
-
-    }
-
-  }
-
-  static int getAirstripCnt() {
-    removeGaps();
-    return countAirstips();
-  }
-
-  static void removeGaps() {
-    //가로 방향 경사로 만들기
-    for (int i = 1;i<=N;i++) {
-      for (int j = 1;j<=N;j++) {
-        int height1 = map[i][j];
-        for (int k = -1;k<=1;k+=2) {
-          if (j+k<1 || j+k>N) continue;
-          int height2 = map[i][j+k];
-          if (height1 - height2 == 1 && j+k*X>=1 && j+k*X<=N) {
-            boolean flag = true;
-
-            for (int f=1;f<=X;f++) {
-              if (map[i][j+k]!=map[i][j+k*f]) {
-                flag = false;
-                break;
-              }
-            }
-            if (flag) {
-              for (int f = 1; f <= X; f++) {
-                load1[i][j + f * k]++;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    //세로 방향 경사로 만들기
-    for (int j = 1;j<=N;j++) {
-      for (int i = 1;i<=N;i++) {
-        int height1 = map[i][j];
-        for (int k = -1;k<=1;k+=2) {
-          if (i+k<1 || i+k>N) continue;
-          int height2 = map[i+k][j];
-          if (height1 - height2 == 1 && i+k*X>=1 && i+k*X<=N) {
-            boolean flag = true;
-
-            for (int f=1;f<=X;f++) {
-              if (map[i+k][j]!=map[i+k*f][j]) {
-                flag = false;
-                break;
-              }
-            }
-
-            if (flag) {
-              for (int f = 1; f <= X; f++) {
-                load2[i + f * k][j]++;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  static int countAirstips() {
-    int count = 0;
-    for (int i = 1;i<=N;i++) {
-      boolean flag = true;
-      for (int j = 1;j<N;j++) {
-        if (Math.abs(map[i][j]-map[i][j+1])>=2) {
-          flag = false;
-          break;
-        }
-        if (load1[i][j]>=2 || load1[i][j+1]>=2) {
-          flag = false;
-          break;
-        }
-        if (Math.abs(map[i][j]-map[i][j+1])==1) {
-          if (map[i][j]>map[i][j+1] && load1[i][j+1]!=1) {
-            flag = false;
-            break;
-          }
-          if (map[i][j]<map[i][j+1] && load1[i][j]!=1) {
-            flag = false;
-            break;
-          }
-        }
-      }
-      if (flag) count++;
-    }
-
-    for (int j = 1;j<=N;j++) {
-      boolean flag = true;
-      for (int i = 1;i<N;i++) {
-        if (Math.abs(map[i][j]-map[i+1][j])>=2) {
-          flag = false;
-          break;
-        }
-        if (load2[i][j]>=2 || load2[i+1][j]>=2) {
-          flag = false;
-          break;
-        }
-        if (Math.abs(map[i][j]-map[i+1][j])==1) {
-          if (map[i][j]>map[i+1][j] && load2[i+1][j]!=1) {
-            flag = false;
-            break;
-          }
-          if (map[i][j]<map[i+1][j] && load2[i][j]!=1) {
-            flag = false;
-            break;
-          }
-        }
-      }
-      if (flag) count++;
-    }
-
-    return count;
-  }
+	static int N,X;
+	static int[][] map;
+	static int[][] check;
+	static int answer;
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		int TestCnt = Integer.parseInt(br.readLine());
+		int[] answers = new int[TestCnt+1];
+		
+		for (int test = 1;test<=TestCnt;test++) {
+			String str = br.readLine();
+			StringTokenizer st = new StringTokenizer(str," ");
+			
+			N = Integer.parseInt(st.nextToken());
+			X = Integer.parseInt(st.nextToken());
+			answer = 0;
+			
+			map = new int[N+1][N+1];
+			check = new int[N+1][N+1];
+			
+			for (int i = 1;i<=N;i++) {
+				str = br.readLine();
+				st = new StringTokenizer(str," ");
+				for (int j = 1;j<=N;j++) {
+					map[i][j] = Integer.parseInt(st.nextToken());
+				}
+			}
+			
+			makeAirstrip(0);
+			checkPossible(0);
+			makeAirstrip(1);
+			checkPossible(1);
+			
+			answers[test] = answer;
+			
+		}
+		
+		for (int i = 1;i<=TestCnt;i++) System.out.println("#"+i+" "+answers[i]);
+		
+	}
+	
+	static void makeAirstrip(int gubun) {
+		for (int i = 1;i<=N;i++) {
+			for (int j = 1;j<=N;j++) {
+				check[i][j] = 0;
+			}
+		}
+		
+		int row1 = 0;
+		int col1 = 0;
+		int row2 = 0;
+		int col2 = 0;
+		int row3 = 0;
+		int col3 = 0;
+		
+		for (int i = 1;i<=N;i++) {
+			for (int j = 2;j<=N-1;j++) {
+				for (int k = -1;k<=1;k+=2) {
+					
+					if (gubun==0) {
+						row1 = i;
+						col1 = j;
+						
+						row2 = i;
+						col2 = j+k;
+					} else {
+						row1 = j;
+						col1 = i;
+						
+						row2 = j+k;
+						col2 = i;
+					}
+					
+					if (map[row1][col1]-map[row2][col2]==1) {
+						for (int f = 1;f<=X;f++) {
+							
+							if (gubun==0) {
+								row3 = i;
+								col3 = j+f*k;
+							} else {
+								row3 = j+f*k;
+								col3 = i;
+							}
+							if (row3<1 || row3>N || col3<1 || col3>N) break;
+							
+							check[row3][col3]++;
+						}
+						
+					}
+				}
+			}
+		}
+		
+	}
+	
+	static void checkPossible(int gubun) {
+		
+		int row1 = 0;
+		int col1 = 0;
+		int row2 = 0;
+		int col2 = 0;
+		
+		for (int i = 1;i<=N;i++) {
+			boolean flag = true;
+			Roop1 : for (int j = 2;j<=N-1;j++) {
+				for (int k = -1;k<=1;k+=2) {
+					
+					if (gubun==0) {
+						row1 = i;
+						col1 = j;
+						
+						row2 = i;
+						col2 = j+k;
+					} else {
+						row1 = j;
+						col1 = i;
+						
+						row2 = j+k;
+						col2 = i;
+					}
+					
+					if (map[row1][col1]-map[row2][col2]>1) {
+						flag = false;
+						break Roop1;
+					}
+					if (map[row1][col1]-map[row2][col2]==1 && check[row2][col2]==0) {
+						flag = false;
+						break Roop1;
+					}
+					if (map[row1][col1]-map[row2][col2]==1 && (j+X*k<1 || j+X*k>N)) {
+						flag = false;
+						break Roop1;
+					}
+				}
+			}
+			Roop2 : for (int j = 1;j<=N;j++) {
+				
+				if (gubun==0) {
+					row1 = i;
+					col1 = j;
+				} else {
+					row1 = j;
+					col1 = i;
+				}
+				
+				if (check[row1][col1]>1) {
+					flag = false;
+					break Roop2;
+				}
+			}
+			if (flag) answer++;
+		}
+	}
 
 }
