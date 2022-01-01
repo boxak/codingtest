@@ -39,8 +39,6 @@ public class LocatingDolls {
 
             if (minValue>deviation) minValue = deviation;
 
-            //System.out.println("len : " + len + " / s : " + s+" / e : "+e+" / sum : " + sum + " / deviation : " + deviation);
-
             while (e < N - 1) {
                 e++;
                 sum += cnts[e] - cnts[s];
@@ -48,7 +46,6 @@ public class LocatingDolls {
                 avg = (double) sum / len;
                 distribution = getDistribution(cnts, s, e, avg, len);
                 deviation = Math.sqrt(distribution);
-                //System.out.println("len : " + len + " / s : " + s+" / e : "+e+" / sum : " + sum + " / deviation : " + deviation + " / minValue : "+minValue);
                 if (deviation < minValue) minValue = deviation;
             }
         }
