@@ -21,29 +21,36 @@ public class LocatingDolls {
             cnts[i] = Integer.parseInt(split[i]);
         }
 
-        int sum = 0;
-        int s = 0;
-        int e = K-1;
+        double minValue = Double.MAX_VALUE;
 
-        for (int i=0;i<K;i++) {
-            sum+=cnts[i];
-        }
+        for (int len = K;len<=N;len++) {
 
-        double avg = (double)sum/K;
-        double distribution = getDistribution(cnts, s, e, avg, K);
-        double deviation = Math.sqrt(distribution);
+            int sum = 0;
+            int s = 0;
+            int e = len - 1;
 
-        double minValue = deviation;
+            for (int i = 0; i < len; i++) {
+                sum += cnts[i];
+            }
 
-        while(e<N-1) {
-            e++;
-            sum+=cnts[e]-cnts[s];
-            s++;
-            avg = (double)sum/K;
-            distribution = getDistribution(cnts, s, e, avg, K);
-            deviation = Math.sqrt(distribution);
+            double avg = (double) sum / len;
+            double distribution = getDistribution(cnts, s, e, avg, len);
+            double deviation = Math.sqrt(distribution);
 
-            if (deviation<minValue) minValue = deviation;
+            if (minValue>deviation) minValue = deviation;
+
+            //System.out.println("len : " + len + " / s : " + s+" / e : "+e+" / sum : " + sum + " / deviation : " + deviation);
+
+            while (e < N - 1) {
+                e++;
+                sum += cnts[e] - cnts[s];
+                s++;
+                avg = (double) sum / len;
+                distribution = getDistribution(cnts, s, e, avg, len);
+                deviation = Math.sqrt(distribution);
+                //System.out.println("len : " + len + " / s : " + s+" / e : "+e+" / sum : " + sum + " / deviation : " + deviation + " / minValue : "+minValue);
+                if (deviation < minValue) minValue = deviation;
+            }
         }
 
         System.out.println(String.format("%.11f",minValue));
