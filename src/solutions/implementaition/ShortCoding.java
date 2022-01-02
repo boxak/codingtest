@@ -104,6 +104,7 @@ public class ShortCoding {
             ArrayList<String> notEqualList = notEquals.get(key);
             for (String str : notEqualList) {
                 sb.append(key + "!=" +str+"&&");
+                /**/
             }
         }
 
