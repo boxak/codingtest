@@ -53,12 +53,21 @@ public class ShortCoding {
             String v1 = split[0];
             String v2 = split[1];
 
+            Pattern pattern2 = Pattern.compile("[0-9\\-]{1,}");
+
+            Matcher matcher1 = pattern2.matcher(v1);
+            Matcher matcher2 = pattern2.matcher(v2);
+
+            if (matcher1.find() && matcher2.find() && !v1.equals(v2)) {
+                System.out.println("0==1");
+            }
+
             pairs.add(new Pair(v1, v2));
         }
 
         Collections.sort(pairs);
 
-        kruskal();
+        unionFind();
 
         for (String logic : logics) {
             if (logic.contains("==")) continue;
@@ -116,7 +125,7 @@ public class ShortCoding {
         System.out.println(answer);
     }
 
-    static void kruskal() {
+    static void unionFind() {
         int N = pairs.size();
 
         for (String variable : variables) {
