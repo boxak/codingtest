@@ -60,12 +60,6 @@ public class ShootingArrow {
     }
 
     public static void dfs(int n, int m, int x, int score1, int score2) {
-        int sum = score1;
-        for (int i = x+1;i<=10;i++) {
-            sum+=10-i;
-        }
-        if (sum<=score2) return;
-
         if (x==11) {
             if (score1 > score2 && n==m) {
                 arr1[11] = score1 - score2;
@@ -90,7 +84,7 @@ public class ShootingArrow {
     }
 
     public static void main(String[] args) {
-        int[] array = solution(9, new int[]{0,0,1,2,0,1,1,1,1,1,1});
+        int[] array = solution(2, new int[]{0,0,0,0,0,0,0,0,0,0,0});
 
         for (int num : array) {
             System.out.printf("%d ", num);
