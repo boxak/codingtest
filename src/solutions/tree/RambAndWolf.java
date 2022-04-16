@@ -82,7 +82,7 @@ public class RambAndWolf {
             if (left != -1 && info[left] == 1 && !visited[left]) {
 
             }
-//
+
         }
 
         return answer;
