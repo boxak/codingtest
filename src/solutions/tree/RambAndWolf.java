@@ -1,16 +1,12 @@
 package solutions.tree;
 
+import java.util.ArrayList;
+
 public class RambAndWolf {
 
     static int[] info;
     static Node[] tree;
-    static int max = 0;
-    static int curNode = 0;
-    static int curLamb = 1;
-    static int curWolf = 0;
-    static int[] wolfCnts;
-    static int[] lambCnts;
-    static boolean[] visited;
+    static int maxSheep;
 
     static class Node {
         int parent = -1;
@@ -23,9 +19,6 @@ public class RambAndWolf {
 
         info = a.clone();
         tree = new Node[info.length];
-        visited = new boolean[info.length];
-        lambCnts = new int[info.length];
-        wolfCnts = new int[info.length];
 
         for (int i = 0;i<info.length;i++) {
             tree[i] = new Node();
@@ -44,86 +37,45 @@ public class RambAndWolf {
             tree[child].parent = parent;
         }
 
-        for (int i = 0;i<info.length;i++) {
-            if (info[i] == 0) {
-                lambCnts[i] = 1;
-            }
-        }
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(0);
 
-        visit(0);
+        dfs(0, 0, 0, list);
 
-        visited[0] = true;
-
-        for (int i = 0;i<info.length;i++) {
-            System.out.println(i + " - " + " lamb : " + lambCnts[i] + " / wolf : " + wolfCnts[i]);
-        }
-
-        while(!isFinished()) {
-            int left = tree[curNode].left;
-            int right = tree[curNode].right;
-
-            //어떤 노드의 왼쪽 자식이 방문한적 없고, 양이라면 무조건 방문
-            if (left != -1 && info[left] == 0 && !visited[left]) {
-                curLamb++;
-                visited[left] = true;
-                curNode = left;
-                continue;
-            }
-
-            //어떤 노드의 오른쪽 자식이 방문한적 없고, 양이라면 무조건 방문
-            if (right != -1 && info[right] == 0 && !visited[right]) {
-                curLamb++;
-                visited[right] = true;
-                curNode = right;
-                continue;
-            }
-
-            //
-            if (left != -1 && info[left] == 1 && !visited[left]) {
-
-            }
-
-        }
+        answer = maxSheep;
 
         return answer;
     }
 
-    public static boolean isFinished() {
-        boolean flag = true;
-        for (int i = 0; i< wolfCnts.length; i++) {
-            if (info[i] == 0 && wolfCnts[i] < curLamb) {
-                flag = false;
-                break;
-            }
+    public static void dfs(int node, int sheep, int wolf, ArrayList<Integer> nextNodes) {
+        System.out.println(node+" "+sheep+" "+wolf);
+        if (info[node] == 0) {
+            sheep++;
+        } else {
+            wolf++;
         }
 
-        return flag;
-    }
+        if (wolf >= sheep) return;
 
-    public static void visit(int node) {
-        int left = tree[node].left;
+        maxSheep = Math.max(sheep, maxSheep);
+
         int right = tree[node].right;
-        if (left != -1) {
-            wolfCnts[left] = info[node] == 0 ? wolfCnts[node] : wolfCnts[node] + 1;
-            visit(left);
-        }
+        int left = tree[node].left;
 
         if (right != -1) {
-            wolfCnts[right] = info[node] == 0 ? wolfCnts[node] : wolfCnts[node] + 1;
-            visit(right);
+            nextNodes.add(right);
         }
-
-        System.out.println(node);
 
         if (left != -1) {
-            lambCnts[node] += lambCnts[left];
+            nextNodes.add(left);
         }
 
-        if (right != -1) {
-            lambCnts[node] += lambCnts[right];
+        nextNodes.remove(Integer.valueOf(node));
+
+        for (int next : nextNodes) {
+            dfs(next, sheep, wolf, (ArrayList<Integer>) nextNodes.clone());
         }
     }
-
 
     public static void main(String[] args) {
         int answer = solution(new int[]{0,0,1,1,1,0,1,0,1,0,1,1},
