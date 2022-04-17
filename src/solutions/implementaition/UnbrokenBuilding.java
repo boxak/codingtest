@@ -5,5 +5,4 @@ public class UnbrokenBuilding {
         int answer = 0;
         return answer;
     }
-    //
 }
