@@ -93,9 +93,7 @@ public class RankingSearch {
         }
 
         int mid = (s+e)/2;
-        if (list.get(mid) == target) {
-            return mid;
-        } else if (list.get(mid) > target) {
+        if (list.get(mid) >= target) {
             return binarySearch(list, target, s, mid);
         } else {
             return binarySearch(list, target, mid+1, e);
@@ -118,18 +116,20 @@ public class RankingSearch {
             System.out.printf("%d ",a);
         }
 
-//        ArrayList<Integer> list = new ArrayList<>();
-//
-//        list.add(10);
-//        list.add(20);
-//        list.add(87);
-//        list.add(93);
-//        list.add(100);
-//        //10 20 87 93 100
-//
-//        int index = binarySearch(list, 110, 0, 4);
-//
-//        System.out.println(index);
+        ArrayList<Integer> list = new ArrayList<>();
+
+        list.add(10);
+        list.add(10);
+        list.add(10);
+        list.add(13);
+        list.add(17);
+        //10 10 10 13 17
+
+        int index = binarySearch(list, 10, 0, 4);
+        int ranking = list.get(index);
+
+        index = list.indexOf(ranking);
+        System.out.println(index);
 
     }
 }
