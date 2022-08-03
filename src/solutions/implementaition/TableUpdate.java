@@ -1,90 +1,93 @@
 package solutions.implementaition;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Stack;
 
 public class TableUpdate {
 
-    static class Pair {
-        int num;
-        int pos;
-        Pair(int num, int pos) {
-            this.num = num;
-            this.pos = pos;
+    class Node {
+        Node next;
+        Node prev;
+        int data;
+        Node(int data) {
+            this.next = null;
+            this.prev = null;
+            this.data = data;
         }
     }
 
-    static public String solution(int n, int k, String[] cmds) {
+    public String solution(int n, int k, String[] cmds) {
+
         String answer = "";
 
-        LinkedList<Integer> list = new LinkedList<>();
-        Stack<Pair> stack = new Stack<>();
+        ArrayList<Node> nodes = new ArrayList<>();
+        Stack<Node> stack = new Stack<>();
 
         for (int i = 0;i<n;i++) {
-            list.add(i);
+            nodes.add(new Node(i));
         }
 
-        ListIterator<Integer> iterator = list.listIterator();
-        int cnt = 0;
-
-        while(iterator.hasNext() && cnt<k) {
-            iterator.next();
-            cnt++;
+        for (int i = 0;i<n-1;i++) {
+            nodes.get(i).next = nodes.get(i+1);
+            nodes.get(i+1).prev = nodes.get(i);
         }
+
+        Node curNode = nodes.get(k);
 
         for (String cmd : cmds) {
             String[] split = cmd.split(" ");
+
             if ("U".equals(split[0])) {
-                int upCnt = Integer.parseInt(split[1]);
-                up(iterator, upCnt);
+                int cnt = Integer.parseInt(split[1]);
+                curNode = up(curNode, cnt);
             } else if ("D".equals(split[0])) {
-                int downCnt = Integer.parseInt(split[1]);
-                down(iterator, downCnt);
+                int cnt = Integer.parseInt(split[1]);
+                curNode = down(curNode, cnt);
             } else if ("C".equals(split[0])) {
-                int idx = 0;
-                int num = 0;
-                if (iterator.hasNext()) {
-                    idx = iterator.nextIndex();
-                    num = iterator.next();
-                }
-                iterator.remove();
-                stack.add(new Pair(num, idx));
-                if (idx >= list.size()) {
-                    up(iterator, 1);
+                stack.add(curNode);
+                if (curNode.prev == null) {
+                    curNode = curNode.next;
+                    curNode.prev = null;
+                } else if (curNode.next == null) {
+                    curNode = curNode.prev;
+                    curNode.next = null;
+                } else {
+                    Node prev = curNode.prev;
+                    Node next = curNode.next;
+
+                    prev.next = next;
+                    next.prev = prev;
+                    curNode = next;
                 }
             } else {
-                Pair pair = stack.peek();
-                stack.pop();
-                int num = pair.num;
-                int pos = pair.pos;
-                int curIdx = iterator.nextIndex();
+                Node deletedNode = stack.pop();
 
-                if (pos > curIdx) {
-                    down(iterator, pos - curIdx);
-                    iterator.add(num);
-                    up(iterator, pos - curIdx + 1);
-                } else {
-                    up(iterator, curIdx - pos);
-                    iterator.add(num);
-                    down(iterator, curIdx - pos);
+                Node prev = deletedNode.prev;
+                Node next = deletedNode.next;
+
+                if (prev != null) {
+                    prev.next = deletedNode;
+                }
+
+                if (next != null) {
+                    next.prev = deletedNode;
                 }
             }
+
         }
 
-        iterator = list.listIterator();
-        boolean[] arr = new boolean[n];
+        boolean[] check = new boolean[n];
 
-        while(iterator.hasNext()) {
-            int pos = iterator.next();
-            arr[pos] = true;
+        while(!stack.isEmpty()) {
+            Node node = stack.pop();
+            int idx = node.data;
+            check[idx] = true;
         }
 
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0;i<n;i++) {
-            if (arr[i]) {
+            if (!check[i]) {
                 sb.append('O');
             } else {
                 sb.append('X');
@@ -96,27 +99,23 @@ public class TableUpdate {
         return answer;
     }
 
-    static void up(ListIterator<Integer> iterator, int cnt) {
-        int a = 0;
-        while(iterator.hasPrevious() && a < cnt) {
-            iterator.previous();
-            a++;
+    Node up(Node curNode, int cnt) {
+        Node node = curNode;
+
+        for (int i = 0;i<cnt && node!=null;i++) {
+            node = node.prev;
         }
+
+        return node;
     }
 
-    static void down(ListIterator<Integer> iterator, int cnt) {
-        int a = 0;
-        while(iterator.hasNext() && a < cnt) {
-            iterator.next();
-            a++;
+    Node down(Node curNode, int cnt) {
+        Node node = curNode;
+
+        for (int i = 0;i<cnt && node!=null;i++) {
+            node = node.next;
         }
-    }
 
-    public static void main(String[] args) {
-        String str = solution(8,2,new String[]{
-                "D 2","C","U 3","C","D 4","C","U 2","Z","Z","U 1","C"
-        });
-
-        System.out.println(str);
+        return node;
     }
 }
