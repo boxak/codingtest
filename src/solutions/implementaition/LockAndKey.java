@@ -4,51 +4,88 @@ import java.util.ArrayList;
 
 public class LockAndKey {
 
-  class Pair {
-    int r;
-    int c;
-    Pair(int x, int y) {
-      r = x;
-      c = y;
+  public boolean solution(int[][] key, int[][] lock) {
+    boolean answer = false;
+
+    int n = key.length;
+    int m = lock.length;
+
+    for (int rot = 0;rot<=3;rot++) {
+      if (rot > 0) {
+        rotate(key);
+      }
+
+      for (int sr = -n+1;sr<m;sr++) {
+        for (int sc = -n+1;sc<m;sc++) {
+
+          boolean[][] check = new boolean[m][m];
+
+          for (int i = 0;i<m;i++) {
+            for (int j = 0;j<m;j++) {
+              if (lock[i][j] == 1) {
+                check[i][j] = true;
+              }
+            }
+          }
+
+          for (int i = 0;i<n;i++) {
+            for (int j = 0;j<n;j++) {
+              int row = sr + i;
+              int col = sc + j;
+              if (row < 0 || row >= m || col < 0 || col >= m) continue;
+
+              if (key[i][j] == 1 && lock[row][col] == 0) {
+                check[row][col] = true;
+              }
+
+              if (key[i][j] == 1 && lock[row][col] == 1) {
+                check[row][col] = false;
+              }
+
+            }
+          }
+
+          boolean flag = true;
+
+          for (int i = 0;i<m;i++) {
+            for (int j = 0;j<m;j++) {
+              if (!check[i][j]) {
+                flag = false;
+                break;
+              }
+            }
+            if (!flag) break;
+          }
+
+          if (flag) {
+            answer = true;
+            break;
+          }
+
+        }
+        if (answer) break;
+      }
+
     }
+
+    return answer;
   }
 
-  public boolean solution(int[][] key, int[][] lock) {
-    boolean answer = true;
-    int[][] map1 = key;
-    for (int rot = 0; rot < 4; rot++) {
-      ArrayList<Pair> list = new ArrayList<>();
-      int fr = -1;
-      int fc = -1;
-      boolean flag = false;
-      for (int i = 0;i<map1.length;i++) {
-        for (int j = 0;j<map1[0].length;j++) {
-          if (map1[i][j] == 1 && !flag) {
-            fr = i;
-            fc = j;
-            flag = true;
-            list.add(new Pair(0,0));
-          } else if(map1[i][j] == 1 && flag) {
-            list.add(new Pair(i-fr,j-fc));
-          }
-        }
-      }
+  void rotate(int[][] key) {
+    int n = key.length;
+    int[][] temp = new int[n][n];
 
-      for (int i = 0;i<lock.length;i++) {
-        for (int j=0;j<lock[0].length;j++) {
-          int sr = i;
-          int sc = j;
-          for (int k=0;k<list.size();k++) {
-            int r = list.get(k).r;
-            int c = list.get(k).c;
-            r = r+sr;
-            c = c+sc;
-            if (r<0 || r>=lock.length || c<0 || c>=lock[0].length) continue;
-
-          }
-        }
+    for (int i = 0;i<n;i++) {
+      for (int j = 0;j<n;j++) {
+        temp[j][n-1-i] = key[i][j];
       }
     }
-    return answer;
+
+    for (int i = 0;i<n;i++) {
+      for (int j = 0;j<n;j++) {
+        key[i][j] = temp[i][j];
+      }
+    }
+
   }
 }
