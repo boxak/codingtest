@@ -24,6 +24,7 @@ public class Party {
     int N = Integer.parseInt(st.nextToken());
     int M = Integer.parseInt(st.nextToken());
     int X = Integer.parseInt(st.nextToken());
+    //
     ArrayList<ArrayList<Pair>> vector = new ArrayList<>();
 
     for (int i = 0;i<=N;i++) vector.add(new ArrayList<>());
