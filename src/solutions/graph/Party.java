@@ -52,7 +52,7 @@ public class Party {
     }
     return max;
   }
-
+//
   static int dijkstra(int N,int start, int end, ArrayList<ArrayList<Pair>> vector) {
     int[] dp = new int[N+1];
     boolean[] check = new boolean[N+1];
