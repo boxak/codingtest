@@ -30,13 +30,13 @@ public class SearchLylics {
             System.out.println(str);
         }
 
-//        String[] words = {"frodo", "front", "frost", "frozen", "frame", "kakao"};
-//        String[] queries = {"fro??", "????o", "fr???", "fro???", "pro?"};
-//
-//        int[] results = solution(words, queries);
-//
-//        for(int num : results) {
-//            System.out.printf("%d ",num);
-//        }
+        String[] words = {"frodo", "front", "frost", "frozen", "frame", "kakao"};
+        String[] queries = {"fro??", "????o", "fr???", "fro???", "pro?"};
+
+        int[] results = solution(words, queries);
+
+        for(int num : results) {
+            System.out.printf("%d ",num);
+        }
     }
 }
