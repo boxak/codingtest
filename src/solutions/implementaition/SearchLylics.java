@@ -1,19 +1,17 @@
 package solutions.implementaition;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SearchLylics {
 
-    static class Node {
+    class Node {
         Map<Character, Node> childNode = new HashMap<>();
         boolean isEnd;
         int cnt;
     }
 
-    static class Trie {
+    class Trie {
         Node root = new Node();
 
         void insert(String s) {
@@ -21,15 +19,10 @@ public class SearchLylics {
             Node node = this.root;
 
             for (char c : s.toCharArray()) {
-                if (node.childNode.containsKey(c)) {
-                    node = node.childNode.get(c);
-                } else {
-                    node.childNode.put(c, new Node());
-                    node.cnt++;
-                    node = node.childNode.get(c);
-                }
+                node.cnt++;
+                node = node.childNode.computeIfAbsent(c, key -> new Node());
             }
-
+            node.cnt++;
             node.isEnd = true;
         }
 
@@ -37,56 +30,49 @@ public class SearchLylics {
             Node node = this.root;
 
             for (char c : s.toCharArray()) {
+                if (c=='?') return node.cnt;
                 node = node.childNode.getOrDefault(c, null);
                 if (node == null) {
-                    return node.cnt;
+                    return 0;
                 }
             }
 
-            return 0;
+            return node.cnt;
         }
 
     }
 
-    public static int[] solution(String[] words, String[] queries) {
-        int[] answer = {};
+    Trie[] tries = new Trie[10001];
+    Trie[] reverse = new Trie[10001];
 
-        Trie[] tries = new Trie[10001];
+    public int[] solution(String[] words, String[] queries) {
+        int[] answer = new int[queries.length];
 
         for (int i = 0;i< tries.length;i++) {
             tries[i] = new Trie();
+            reverse[i] = new Trie();
+        }
+
+        for (int i = 0;i<words.length;i++) {
+            String word = words[i];
+            String reverse_word = new StringBuffer(word).reverse().toString();
+            int wordLen = word.length();
+            tries[wordLen].insert(word);
+            reverse[wordLen].insert(reverse_word);
         }
 
 
-//
+        for (int i = 0;i<queries.length;i++) {
+            int len = queries[i].length();
+            if (queries[i].charAt(len-1) == '?') {
+                answer[i] = tries[len].search(queries[i]);
+            } else {
+                String newQuery = new StringBuffer(queries[i]).reverse().toString();
+                answer[i] = reverse[len].search(newQuery);
+            }
+        }
+
         return answer;
     }
 
-    public static void main(String[] args) {
-        String s1 = "fro??";
-        String s2 = "frod?";
-
-        ArrayList<String> list = new ArrayList<>();
-        list.add(s1);
-        list.add(s2);
-
-        System.out.println("starts : " + s2.startsWith(""));
-
-        Collections.sort(list);
-
-        System.out.println(list);
-
-        for(String str : list) {
-            System.out.println(str);
-        }
-
-        String[] words = {"frodo", "front", "frost", "frozen", "frame", "kakao"};
-        String[] queries = {"fro??", "????o", "fr???", "fro???", "pro?"};
-
-        int[] results = solution(words, queries);
-
-        for(int num : results) {
-            System.out.printf("%d ",num);
-        }
-    }
 }
