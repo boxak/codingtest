@@ -44,7 +44,7 @@ public class SearchLylics {
 
     Trie[] tries = new Trie[10001];
     Trie[] reverse = new Trie[10001];
-
+//
     public int[] solution(String[] words, String[] queries) {
         int[] answer = new int[queries.length];
 
