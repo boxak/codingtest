@@ -13,11 +13,8 @@ public class SearchLylics {
 
     class Trie {
         Node root = new Node();
-
         void insert(String s) {
-
             Node node = this.root;
-
             for (char c : s.toCharArray()) {
                 node.cnt++;
                 node = node.childNode.computeIfAbsent(c, key -> new Node());
@@ -25,7 +22,6 @@ public class SearchLylics {
             node.cnt++;
             node.isEnd = true;
         }
-
         int search(String s) {
             Node node = this.root;
 
