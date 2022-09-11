@@ -46,7 +46,7 @@ public class SearchLylics {
             tries[i] = new Trie();
             reverse[i] = new Trie();
         }
-
+//
         for (int i = 0;i<words.length;i++) {
             String word = words[i];
             String reverse_word = new StringBuffer(word).reverse().toString();
