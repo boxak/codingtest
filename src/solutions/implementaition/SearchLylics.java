@@ -13,11 +13,8 @@ public class SearchLylics {
 
     class Trie {
         Node root = new Node();
-
         void insert(String s) {
-
             Node node = this.root;
-
             for (char c : s.toCharArray()) {
                 node.cnt++;
                 node = node.childNode.computeIfAbsent(c, key -> new Node());
@@ -25,7 +22,6 @@ public class SearchLylics {
             node.cnt++;
             node.isEnd = true;
         }
-
         int search(String s) {
             Node node = this.root;
 
@@ -41,10 +37,8 @@ public class SearchLylics {
         }
 
     }
-//
     Trie[] tries = new Trie[10001];
     Trie[] reverse = new Trie[10001];
-
     public int[] solution(String[] words, String[] queries) {
         int[] answer = new int[queries.length];
 
@@ -60,7 +54,6 @@ public class SearchLylics {
             tries[wordLen].insert(word);
             reverse[wordLen].insert(reverse_word);
         }
-
 
         for (int i = 0;i<queries.length;i++) {
             int len = queries[i].length();
