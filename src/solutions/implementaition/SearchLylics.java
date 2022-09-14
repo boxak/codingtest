@@ -41,7 +41,7 @@ public class SearchLylics {
         }
 
     }
-
+//
     Trie[] tries = new Trie[10001];
     Trie[] reverse = new Trie[10001];
 
