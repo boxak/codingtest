@@ -13,17 +13,28 @@ public class TheBestSet {
 
         answer = new int[n];
 
-        double exact = ((double)s) / n;
+        if (s%n!=0) {
+            int num2 = num+1;
+            int diff = num2*n - s;
 
-        if (exact - num >= 0.5)
+            for (int i = 0;i<diff;i++) {
+                answer[i] = num;
+            }
 
-        Arrays.sort(answer);
+            for (int i = diff;i<n;i++) {
+                answer[i] = num2;
+            }
+        } else {
+            for (int i = 0;i<n;i++) {
+                answer[i] = num;
+            }
+        }
 
         return answer;
     }
 
     public static void main(String[] args) {
-        int[] arr = solution(100, 100_000_000);
+        int[] arr = solution(3, 16);
 
         System.out.println("answer");
         for (int i = 0;i<arr.length;i++) {
