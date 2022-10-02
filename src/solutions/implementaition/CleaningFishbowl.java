@@ -82,6 +82,6 @@ public class CleaningFishbowl {
     }
 
     static void arrange1() {
-
+//
     }
 }
