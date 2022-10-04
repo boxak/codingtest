@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class ExpressByN {
   public static int solution(int N, int number) {
     int answer = -1;
-
+//
     int[] dp = new int[100000];
 
     for (int i = 1; i < 100000; i++) {
