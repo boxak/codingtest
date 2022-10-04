@@ -17,6 +17,8 @@ public class CleaningFishbowl {
 
     static int N,K;
     static int[][] map;
+    static int[] dr = {-1,0,1,0};
+    static int[] dc = {0,1,0,-1};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -27,6 +29,13 @@ public class CleaningFishbowl {
         str = br.readLine();
         st = new StringTokenizer(str," ");
         map = new int[100][100];
+
+        for (int i = 0;i<=99;i++) {
+            for (int j = 0;j<=99;j++) {
+                map[i][j] = -1;
+            }
+        }
+
         for (int i = 0;i<N;i++) {
             map[0][i] = Integer.parseInt(st.nextToken());
         }
@@ -82,6 +91,60 @@ public class CleaningFishbowl {
     }
 
     static void arrange1() {
-//
+        int leftNum = map[0][0];
+
+        map[0][0] = 0;
+        map[1][1] = leftNum;
+
+        moveAllLeft();
+
+        while(!arrange1Stop()) {
+            moveAndRotate();
+            moveAllLeft();
+        }
+
+    }
+
+    static void moveAllLeft() {
+        if (map[0][99]!=0) return;
+        for (int j = 1;j<=99;j++) {
+            for (int i = 0;i<=99;i++) {
+                map[i-1][j] = map[i][j];
+            }
+        }
+    }
+
+    static boolean arrange1Stop() {
+        int height = 0;
+        int lengthOf1Height = 0;
+
+        for (int j = 99;j>=0;j--) {
+            if (map[0][j]!=-1) {
+                if (map[1][j]==-1) {
+                    lengthOf1Height++;
+                } else {
+                    height++;
+                }
+            }
+        }
+
+        return height>lengthOf1Height;
+    }
+
+    static void moveAndRotate() {
+        int startCol = 0;
+        for (int j = 99;j>=0;j--) {
+            if (map[1][j] != 0) {
+                startCol = j;
+                break;
+            }
+        }
+
+        for (int j = startCol;j>=0;j--) {
+            for (int i = 0;i<=99;i++) {
+                if (map[i][j]==-1) break;
+                map[startCol-j+1][j+i+1] = map[i][j];
+            }
+        }
     }
 }
