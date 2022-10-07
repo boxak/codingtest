@@ -18,7 +18,7 @@ public class CleaningFishbowl {
     static int N,K;
     static int[][] map;
     static int[] dr = {-1,0,1,0};
-    static int[] dc = {0,1,0,-1};
+    static int[] dc = {0,1,0,-1};//
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
